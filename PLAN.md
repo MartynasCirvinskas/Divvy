@@ -1,6 +1,6 @@
 # Divvy Implementation Plan — Foundation → V0.1 → V1
 
-> **Execution mode:** Ralph Loop. Each iteration, this plan is re-fed. Mark `- [ ]` → `- [x]` as steps complete.
+> **Execution mode:** Ralph Loop. Each iteration, this plan is re-fed. Mark `- [ ]` → `- [ ]` as steps complete.
 > **Completion:** When ALL phases below are done, emit `<promise>DIVVY V1 SHIPPABLE</promise>` to exit the loop.
 > **Repo root:** `C:\Users\marty\OneDrive\Desktop\Agents\Idea_Executor\Divvy`
 
@@ -21,7 +21,7 @@
 5. **Do not invent features outside this plan.** When in doubt, prefer the simplest passing implementation.
 6. **No `git push`, no PR creation, no destructive git ops.**
 7. **If a step is ambiguous,** read the actual file (use Read tool) before changing it. Never trust prior diffs blindly — re-verify.
-8. **When ALL `- [x]` are checked across all phases**, output the completion promise. Not before.
+8. **When ALL `- [ ]` are checked across all phases**, output the completion promise. Not before.
 
 ---
 
@@ -39,7 +39,7 @@ Make the project safe to iterate. No app behavior changes (except getting it to 
 - [x] **Step 1:** Create `assets/` directory if absent.
 - [x] **Step 2:** Generate three solid-color PNG placeholders (teal `#00D4AA`) at the required dimensions. Used PowerShell + System.Drawing — verified via `file`: icon.png and adaptive-icon.png are 1024×1024 RGBA, splash.png is 1242×2436 RGBA on dark background.
 - [x] **Step 3:** Verified PNGs via `file` command — all three valid 8-bit RGBA PNGs.
-- [x] **Step 4:** Commit: `chore(assets): add placeholder icon, splash, adaptive-icon`.
+- [x] **Step 4:** Commit: `chore(assets): add placeholder icon, splash, adaptive-icon` (folded into combined docs+assets commit febed6b).
 
 ## Task 0.2 — Move Firebase config to env-driven `app.config.js`
 
@@ -139,19 +139,19 @@ EXPO_PUBLIC_FIREBASE_APP_ID=
 
 - [x] **Step 5:** Update `.gitignore` to include `.env` and `.env.local` (preserve existing entries).
 - [x] **Step 6:** Delete `app.json` (Expo will use `app.config.js`).
-- [x] **Step 7:** Commit: `chore(config): move firebase config to env-driven app.config.js`.
+- [x] **Step 7:** Committed as `chore(config): move firebase config to env-driven app.config.js` (592028d).
 
 ## Task 0.3 — Remove dead dependencies
 
 **Files:**
 - Modify: `package.json`
 
-- [x] **Step 1:** Remove these unused deps from `package.json`:
+- [ ] **Step 1:** Remove these unused deps from `package.json`:
   - `expo-notifications` (no usage in `src/`)
   - `@react-native-community/slider` (no usage in `src/`)
   - `@react-navigation/bottom-tabs` (no usage in `src/`)
-- [x] **Step 2:** Run `npm install` to refresh `package-lock.json`.
-- [x] **Step 3:** Commit: `chore(deps): remove unused expo-notifications, slider, bottom-tabs`.
+- [ ] **Step 2:** Run `npm install` to refresh `package-lock.json`.
+- [ ] **Step 3:** Commit: `chore(deps): remove unused expo-notifications, slider, bottom-tabs`.
 
 ## Task 0.4 — Add ESLint + Prettier
 
@@ -161,12 +161,12 @@ EXPO_PUBLIC_FIREBASE_APP_ID=
 - Create: `.eslintignore`
 - Modify: `package.json` (add scripts + devDeps)
 
-- [x] **Step 1:** Install dev deps:
+- [ ] **Step 1:** Install dev deps:
 ```bash
 npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-native eslint-config-prettier prettier
 ```
 
-- [x] **Step 2:** Create `.eslintrc.js`:
+- [ ] **Step 2:** Create `.eslintrc.js`:
 ```js
 module.exports = {
   root: true,
@@ -194,7 +194,7 @@ module.exports = {
 };
 ```
 
-- [x] **Step 3:** Create `.prettierrc`:
+- [ ] **Step 3:** Create `.prettierrc`:
 ```json
 {
   "singleQuote": true,
@@ -205,7 +205,7 @@ module.exports = {
 }
 ```
 
-- [x] **Step 4:** Create `.eslintignore`:
+- [ ] **Step 4:** Create `.eslintignore`:
 ```
 node_modules
 .expo
@@ -216,7 +216,7 @@ android
 *.config.js
 ```
 
-- [x] **Step 5:** Add scripts to `package.json`:
+- [ ] **Step 5:** Add scripts to `package.json`:
 ```json
 {
   "scripts": {
@@ -233,8 +233,8 @@ android
 }
 ```
 
-- [x] **Step 6:** Run `npm run lint` and accept that there will be warnings — do NOT auto-fix everything; just verify ESLint runs without crashing.
-- [x] **Step 7:** Commit: `chore(lint): add eslint + prettier config`.
+- [ ] **Step 6:** Run `npm run lint` and accept that there will be warnings — do NOT auto-fix everything; just verify ESLint runs without crashing.
+- [ ] **Step 7:** Commit: `chore(lint): add eslint + prettier config`.
 
 ## Task 0.5 — Wire Jest properly
 
@@ -242,7 +242,7 @@ android
 - Modify: `package.json`
 - Create: `jest.setup.js`
 
-- [x] **Step 1:** Update `package.json` jest block:
+- [ ] **Step 1:** Update `package.json` jest block:
 ```json
 {
   "jest": {
@@ -255,13 +255,13 @@ android
 }
 ```
 
-- [x] **Step 2:** Create minimal `jest.setup.js`:
+- [ ] **Step 2:** Create minimal `jest.setup.js`:
 ```js
 // Silence noisy warnings in tests
 jest.spyOn(console, 'warn').mockImplementation(() => {});
 ```
 
-- [x] **Step 3:** Verify a no-op test passes — create `src/utils/__tests__/sanity.test.ts`:
+- [ ] **Step 3:** Verify a no-op test passes — create `src/utils/__tests__/sanity.test.ts`:
 ```ts
 describe('sanity', () => {
   it('runs', () => {
@@ -270,16 +270,16 @@ describe('sanity', () => {
 });
 ```
 
-- [x] **Step 4:** Run `npm test -- --watchAll=false`. Expect: 1 test passes.
-- [x] **Step 5:** Commit: `chore(test): wire jest with setup + sanity test`.
+- [ ] **Step 4:** Run `npm test -- --watchAll=false`. Expect: 1 test passes.
+- [ ] **Step 5:** Commit: `chore(test): wire jest with setup + sanity test`.
 
 ## Task 0.6 — Update README with setup steps
 
 **Files:**
 - Modify: `README.md`
 
-- [x] **Step 1:** Add a "Local Setup" section to `README.md` covering: install deps, copy `.env.example`, set Firebase env, paste RTDB rules from `firebase-rules.json` (created in Phase 1), `npm start`. Keep the existing content.
-- [x] **Step 2:** Commit: `docs: add local setup instructions`.
+- [ ] **Step 1:** Add a "Local Setup" section to `README.md` covering: install deps, copy `.env.example`, set Firebase env, paste RTDB rules from `firebase-rules.json` (created in Phase 1), `npm start`. Keep the existing content.
+- [ ] **Step 2:** Commit: `docs: add local setup instructions`.
 
 ---
 
@@ -293,7 +293,7 @@ Fix the 5 critical bugs blocking launch + necessary supporting refactors.
 - Create: `src/utils/money.ts`
 - Create: `src/utils/__tests__/money.test.ts`
 
-- [x] **Step 1:** Write the failing tests first — create `src/utils/__tests__/money.test.ts`:
+- [ ] **Step 1:** Write the failing tests first — create `src/utils/__tests__/money.test.ts`:
 
 ```ts
 import {
@@ -373,9 +373,9 @@ describe('money', () => {
 });
 ```
 
-- [x] **Step 2:** Run `npm test -- money.test.ts --watchAll=false`. Expect: all FAIL (module not found).
+- [ ] **Step 2:** Run `npm test -- money.test.ts --watchAll=false`. Expect: all FAIL (module not found).
 
-- [x] **Step 3:** Create `src/utils/money.ts`:
+- [ ] **Step 3:** Create `src/utils/money.ts`:
 
 ```ts
 const MAX_CENTS = 1_000_000_000_00; // $1 billion ceiling — sanity guard
@@ -430,15 +430,15 @@ export function formatCents(cents: number, currency = 'USD'): string {
 }
 ```
 
-- [x] **Step 4:** Run `npm test -- money.test.ts --watchAll=false`. Expect: ALL pass.
-- [x] **Step 5:** Commit: `feat(money): add integer-cents utility with full test coverage`.
+- [ ] **Step 4:** Run `npm test -- money.test.ts --watchAll=false`. Expect: ALL pass.
+- [ ] **Step 5:** Commit: `feat(money): add integer-cents utility with full test coverage`.
 
 ## Task 1.2 — Migrate `Expense.amount` and `customAmounts` to cents (types only)
 
 **Files:**
 - Modify: `src/types/index.ts`
 
-- [x] **Step 1:** Update `Expense` interface — rename `amount` → `amountCents`, change semantics of `customAmounts`:
+- [ ] **Step 1:** Update `Expense` interface — rename `amount` → `amountCents`, change semantics of `customAmounts`:
 
 ```ts
 export interface Expense {
@@ -471,8 +471,8 @@ export interface Debt {
 }
 ```
 
-- [x] **Step 2:** Run `npm run typecheck`. Expect: many errors across `balances.ts`, `useGroup.ts`, `GroupScreen.tsx`, `AddExpenseScreen.tsx` — these are next tasks. Do NOT fix here.
-- [x] **Step 3:** Commit: `refactor(types): switch Expense/Debt/Balance to integer cents`.
+- [ ] **Step 2:** Run `npm run typecheck`. Expect: many errors across `balances.ts`, `useGroup.ts`, `GroupScreen.tsx`, `AddExpenseScreen.tsx` — these are next tasks. Do NOT fix here.
+- [ ] **Step 3:** Commit: `refactor(types): switch Expense/Debt/Balance to integer cents`.
 
 ## Task 1.3 — Migrate `balances.ts` to cents
 
@@ -480,7 +480,7 @@ export interface Debt {
 - Modify: `src/utils/balances.ts`
 - Create: `src/utils/__tests__/balances.test.ts`
 
-- [x] **Step 1:** Write the failing tests first:
+- [ ] **Step 1:** Write the failing tests first:
 
 ```ts
 // src/utils/__tests__/balances.test.ts
@@ -590,9 +590,9 @@ describe('balances', () => {
 });
 ```
 
-- [x] **Step 2:** Run `npm test -- balances.test.ts --watchAll=false`. Expect: FAIL (signature mismatch / module returns wrong field names).
+- [ ] **Step 2:** Run `npm test -- balances.test.ts --watchAll=false`. Expect: FAIL (signature mismatch / module returns wrong field names).
 
-- [x] **Step 3:** Rewrite `src/utils/balances.ts` to use cents AND fix the settle-skip bug:
+- [ ] **Step 3:** Rewrite `src/utils/balances.ts` to use cents AND fix the settle-skip bug:
 
 ```ts
 import { Expense, Member, Debt, MemberBalance } from '../types';
@@ -701,8 +701,8 @@ export function formatAmountLegacy(amount: number, currency = 'USD'): string {
 }
 ```
 
-- [x] **Step 4:** Run `npm test -- balances.test.ts --watchAll=false`. Expect: ALL pass.
-- [x] **Step 5:** Commit: `refactor(balances): integer cents + per-debtor settlement; add tests`.
+- [ ] **Step 4:** Run `npm test -- balances.test.ts --watchAll=false`. Expect: ALL pass.
+- [ ] **Step 5:** Commit: `refactor(balances): integer cents + per-debtor settlement; add tests`.
 
 ## Task 1.4 — Update screens to use cents
 
@@ -711,22 +711,22 @@ export function formatAmountLegacy(amount: number, currency = 'USD'): string {
 - Modify: `src/screens/GroupScreen.tsx`
 - Modify: `src/hooks/useGroup.ts`
 
-- [x] **Step 1:** In `AddExpenseScreen.tsx`:
+- [ ] **Step 1:** In `AddExpenseScreen.tsx`:
   - Replace `parseFloat(amount.replace(',', '.'))` and the `Math.abs(total - amt) > 0.01` validation with `parseAmountToCents` calls.
   - Build `Expense` with `amountCents: parseAmountToCents(amount)` instead of `amount`.
   - Custom amounts: store user input as strings, convert to cents on save with `parseAmountToCents` then validate `sumCents(values) === totalCents` exactly (no tolerance — it's integer).
   - Equal-share preview uses `formatCents(splitEqualCents(amt, n)[0], group.currency)`.
   - Import: `import { parseAmountToCents, sumCents, splitEqualCents, formatCents } from '../utils/money';`
 
-- [x] **Step 2:** In `GroupScreen.tsx`:
+- [ ] **Step 2:** In `GroupScreen.tsx`:
   - Replace `formatAmount(item.amount, ...)` with `formatCents(item.amountCents, ...)`.
   - Replace `expenses.reduce((s, e) => s + e.amount, 0)` with `expenses.reduce((s, e) => s + e.amountCents, 0)`.
   - Replace `formatAmount(item.amount, ...)` for debt rows with `formatCents(item.amountCents, ...)`.
   - Update import: `import { formatCents } from '../utils/money';` (remove `formatAmount` from balances import).
 
-- [x] **Step 3:** No changes to `useGroup.ts` should be needed — it just relays. Verify with typecheck.
-- [x] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 5:** Commit: `refactor(screens): consume cents API throughout`.
+- [ ] **Step 3:** No changes to `useGroup.ts` should be needed — it just relays. Verify with typecheck.
+- [ ] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 5:** Commit: `refactor(screens): consume cents API throughout`.
 
 ## Task 1.5 — Add `ProfileContext` to share profile across screens
 
@@ -737,7 +737,7 @@ export function formatAmountLegacy(amount: number, currency = 'USD'): string {
 - Modify: `src/screens/GroupScreen.tsx`
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [x] **Step 1:** Create `src/contexts/ProfileContext.tsx`:
+- [ ] **Step 1:** Create `src/contexts/ProfileContext.tsx`:
 
 ```tsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
@@ -807,7 +807,7 @@ export function useProfile(): Ctx {
 }
 ```
 
-- [x] **Step 2:** Wrap `App.tsx`:
+- [ ] **Step 2:** Wrap `App.tsx`:
 ```tsx
 import 'react-native-reanimated';
 import React from 'react';
@@ -826,10 +826,10 @@ export default function App() {
 }
 ```
 
-- [x] **Step 3:** Replace `getOrCreateProfile` calls in all three screens with `useProfile()`. Remove the `myDeviceId`/`myName` local state — read from `profile.deviceId`/`profile.name`. Remove the `useEffect` that fetched it.
+- [ ] **Step 3:** Replace `getOrCreateProfile` calls in all three screens with `useProfile()`. Remove the `myDeviceId`/`myName` local state — read from `profile.deviceId`/`profile.name`. Remove the `useEffect` that fetched it.
 
-- [x] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 5:** Commit: `refactor(state): lift profile to ProfileContext`.
+- [ ] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 5:** Commit: `refactor(state): lift profile to ProfileContext`.
 
 ## Task 1.6 — Add `GroupsContext` and fix the disappearing-groups bug
 
@@ -839,7 +839,7 @@ export default function App() {
 - Modify: `src/screens/HomeScreen.tsx`
 - Modify: `src/firebase/db.ts` (add lightweight metadata fetcher)
 
-- [x] **Step 1:** Add a metadata-only fetcher to `db.ts` (avoids loading full expense list for the home screen):
+- [ ] **Step 1:** Add a metadata-only fetcher to `db.ts` (avoids loading full expense list for the home screen):
 
 ```ts
 // At end of db.ts
@@ -869,7 +869,7 @@ export async function getGroupMeta(groupId: string): Promise<GroupMeta | null> {
 }
 ```
 
-- [x] **Step 2:** Create `src/contexts/GroupsContext.tsx`:
+- [ ] **Step 2:** Create `src/contexts/GroupsContext.tsx`:
 
 ```tsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
@@ -924,7 +924,7 @@ export function useGroups(): Ctx {
 }
 ```
 
-- [x] **Step 3:** Wrap `App.tsx` with `GroupsProvider` (inside `ProfileProvider`):
+- [ ] **Step 3:** Wrap `App.tsx` with `GroupsProvider` (inside `ProfileProvider`):
 
 ```tsx
 <ProfileProvider>
@@ -934,15 +934,15 @@ export function useGroups(): Ctx {
 </ProfileProvider>
 ```
 
-- [x] **Step 4:** Update `HomeScreen.tsx`:
+- [ ] **Step 4:** Update `HomeScreen.tsx`:
   - Replace `useState<Group[]>([])` with `const { groups, loading: groupsLoading, addLocally } = useGroups();`
   - Replace `setGroups((prev) => [group, ...prev])` after create with `addLocally({ id: group.id, code: group.code, name: group.name, emoji: group.emoji, currency: group.currency, memberCount: 1, createdAt: group.createdAt })`
   - Same for join: `addLocally({ ... })` using the fetched group's metadata
   - The `renderGroup` works on `GroupMeta` now — adjust field references (`item.memberCount` instead of `Object.keys(item.members)`)
 
-- [x] **Step 5:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 6:** Manual verify: kill the simulator, restart, groups list should now reload.
-- [x] **Step 7:** Commit: `fix(home): reload groups from storage on app start`.
+- [ ] **Step 5:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 6:** Manual verify: kill the simulator, restart, groups list should now reload.
+- [ ] **Step 7:** Commit: `fix(home): reload groups from storage on app start`.
 
 ## Task 1.7 — Add Firebase Anonymous Auth + member-bound RTDB rules
 
@@ -952,7 +952,7 @@ export function useGroups(): Ctx {
 - Modify: `src/store/localStore.ts` (accept externally-provided deviceId)
 - Create: `firebase-rules.json`
 
-- [x] **Step 1:** Update `localStore.ts` so the deviceId can be supplied:
+- [ ] **Step 1:** Update `localStore.ts` so the deviceId can be supplied:
 
 ```ts
 export async function getOrCreateProfile(authUid?: string): Promise<LocalProfile> {
@@ -981,7 +981,7 @@ export async function getOrCreateProfile(authUid?: string): Promise<LocalProfile
 }
 ```
 
-- [x] **Step 2:** Update `ProfileContext.tsx` `reload`:
+- [ ] **Step 2:** Update `ProfileContext.tsx` `reload`:
 
 ```ts
 const reload = useCallback(async () => {
@@ -1000,9 +1000,9 @@ const reload = useCallback(async () => {
 
 (Add `import { ensureAnonAuth } from '../firebase/config';`)
 
-- [x] **Step 3:** Add `firebase` Auth peer to package.json — it's already in `firebase` v10 modular SDK (no extra package). Verify by running `npm run typecheck`.
+- [ ] **Step 3:** Add `firebase` Auth peer to package.json — it's already in `firebase` v10 modular SDK (no extra package). Verify by running `npm run typecheck`.
 
-- [x] **Step 4:** Create `firebase-rules.json` with member-bound rules:
+- [ ] **Step 4:** Create `firebase-rules.json` with member-bound rules:
 
 ```json
 {
@@ -1058,16 +1058,16 @@ NOTE: The above is a simplification. RTDB rules use `auth.uid` and predicate exp
 
 This requires you to enable Anonymous sign-in in Firebase console (Auth → Sign-in method → Anonymous → Enable). Document this in README.
 
-- [x] **Step 5:** Update `README.md` setup section to include: enable Anonymous Auth + paste rules from `firebase-rules.json`.
+- [ ] **Step 5:** Update `README.md` setup section to include: enable Anonymous Auth + paste rules from `firebase-rules.json`.
 
-- [x] **Step 6:** Commit: `feat(auth): enable Firebase anonymous auth + member-bound RTDB rules`.
+- [ ] **Step 6:** Commit: `feat(auth): enable Firebase anonymous auth + member-bound RTDB rules`.
 
 ## Task 1.8 — Atomic group creation + safe Firebase writes
 
 **Files:**
 - Modify: `src/firebase/db.ts`
 
-- [x] **Step 1:** Replace `createGroup` with a multi-path atomic update:
+- [ ] **Step 1:** Replace `createGroup` with a multi-path atomic update:
 
 ```ts
 import { ref, set, get, push, update, remove, onValue, off, DatabaseReference } from 'firebase/database';
@@ -1082,7 +1082,7 @@ export async function createGroup(group: Group): Promise<void> {
 }
 ```
 
-- [x] **Step 2:** Replace `settleExpense` with a transaction to avoid the read-modify-write race:
+- [ ] **Step 2:** Replace `settleExpense` with a transaction to avoid the read-modify-write race:
 
 ```ts
 import { runTransaction } from 'firebase/database';
@@ -1103,7 +1103,7 @@ export async function settleExpense(
 }
 ```
 
-- [x] **Step 3:** Update `useGroup.ts` `handleSettleExpense` signature — remove the `currentSettled` arg passing:
+- [ ] **Step 3:** Update `useGroup.ts` `handleSettleExpense` signature — remove the `currentSettled` arg passing:
 
 ```ts
 const handleSettleExpense = useCallback(async (expenseId: string, memberId: string) => {
@@ -1112,15 +1112,15 @@ const handleSettleExpense = useCallback(async (expenseId: string, memberId: stri
 }, [groupId]);
 ```
 
-- [x] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 5:** Commit: `fix(db): atomic createGroup + transactional settleExpense`.
+- [ ] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 5:** Commit: `fix(db): atomic createGroup + transactional settleExpense`.
 
 ## Task 1.9 — Wire settle-up UI per debt row
 
 **Files:**
 - Modify: `src/screens/GroupScreen.tsx`
 
-- [x] **Step 1:** In `GroupScreen.tsx`, the `debts` rendered are *simplified* (cross-member). For per-debtor settlement to make sense at the UX level, render the option only on the user's own outgoing debts. When user taps "Mark settled" on a debt row where `from === myDeviceId`, call `settleExpense` for **each** unsettled expense where they are a debtor to `to`. Add a helper that finds those expenses.
+- [ ] **Step 1:** In `GroupScreen.tsx`, the `debts` rendered are *simplified* (cross-member). For per-debtor settlement to make sense at the UX level, render the option only on the user's own outgoing debts. When user taps "Mark settled" on a debt row where `from === myDeviceId`, call `settleExpense` for **each** unsettled expense where they are a debtor to `to`. Add a helper that finds those expenses.
 
 Add to `useGroup` hook a derived list:
 ```ts
@@ -1144,7 +1144,7 @@ const debtsByPair = useMemo(() => {
 ```
 Add `debtsByPair` to the returned object.
 
-- [x] **Step 2:** In `GroupScreen.tsx` `renderDebt`, when `isMe`, add a "Mark settled" button:
+- [ ] **Step 2:** In `GroupScreen.tsx` `renderDebt`, when `isMe`, add a "Mark settled" button:
 
 ```tsx
 {isMe && (
@@ -1197,8 +1197,8 @@ settleBtnText: { color: COLORS.primary, fontSize: 12, fontWeight: '700' },
 
 Adjust the `debtCard` flex layout to accommodate the button: change to `gap: 8`, keep `flexDirection: 'row'`, wrap text/amount in a flex column.
 
-- [x] **Step 3:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 4:** Commit: `feat(group): add settle-up UI per debt row`.
+- [ ] **Step 3:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 4:** Commit: `feat(group): add settle-up UI per debt row`.
 
 ## Task 1.10 — Replace `paddingTop: 60` with `useSafeAreaInsets()`
 
@@ -1207,7 +1207,7 @@ Adjust the `debtCard` flex layout to accommodate the button: change to `gap: 8`,
 - Modify: `src/screens/GroupScreen.tsx`
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [x] **Step 1:** In each screen, replace the StyleSheet's `paddingTop: 60` with a runtime-computed inset. Add at the top of each component:
+- [ ] **Step 1:** In each screen, replace the StyleSheet's `paddingTop: 60` with a runtime-computed inset. Add at the top of each component:
 
 ```tsx
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -1223,7 +1223,7 @@ Then in the JSX header `View`, use:
 
 Remove `paddingTop: 60` from the StyleSheet for `header`.
 
-- [x] **Step 2:** Commit: `fix(layout): use safe-area insets instead of hardcoded paddingTop`.
+- [ ] **Step 2:** Commit: `fix(layout): use safe-area insets instead of hardcoded paddingTop`.
 
 ## Task 1.11 — Remove dead currency LTL + fix currency symbol fallback
 
@@ -1232,9 +1232,9 @@ Remove `paddingTop: 60` from the StyleSheet for `header`.
 - Modify: `src/screens/AddExpenseScreen.tsx`
 - Create: `src/utils/currency.ts`
 
-- [x] **Step 1:** Remove `'LTL'` from the currency picker in `HomeScreen.tsx:226`. Add `'PLN'` is already there; add `'CHF'`, `'CAD'`, `'AUD'` for breadth.
+- [ ] **Step 1:** Remove `'LTL'` from the currency picker in `HomeScreen.tsx:226`. Add `'PLN'` is already there; add `'CHF'`, `'CAD'`, `'AUD'` for breadth.
 
-- [x] **Step 2:** Create `src/utils/currency.ts`:
+- [ ] **Step 2:** Create `src/utils/currency.ts`:
 ```ts
 export const CURRENCY_SYMBOLS: Record<string, string> = {
   USD: '$', EUR: '€', GBP: '£', JPY: '¥', PLN: 'zł',
@@ -1248,11 +1248,11 @@ export function currencySymbol(code: string): string {
 export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'PLN', 'CHF', 'CAD', 'AUD'];
 ```
 
-- [x] **Step 3:** In `AddExpenseScreen.tsx`, replace the inline ternary at lines 137-139 with `{currencySymbol(group?.currency ?? 'USD')}`. Replace the same inline ternary in the equal-share preview.
+- [ ] **Step 3:** In `AddExpenseScreen.tsx`, replace the inline ternary at lines 137-139 with `{currencySymbol(group?.currency ?? 'USD')}`. Replace the same inline ternary in the equal-share preview.
 
-- [x] **Step 4:** Use `SUPPORTED_CURRENCIES` from `currency.ts` in `HomeScreen.tsx` instead of the hardcoded array.
+- [ ] **Step 4:** Use `SUPPORTED_CURRENCIES` from `currency.ts` in `HomeScreen.tsx` instead of the hardcoded array.
 
-- [x] **Step 5:** Commit: `fix(currency): centralize symbols, drop LTL, expand list`.
+- [ ] **Step 5:** Commit: `fix(currency): centralize symbols, drop LTL, expand list`.
 
 ## Task 1.12 — Wrap all `JSON.parse` and Firebase writes in try/catch
 
@@ -1261,7 +1261,7 @@ export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'PLN', 'CHF', '
 - Modify: `src/screens/HomeScreen.tsx`
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [x] **Step 1:** Wrap `handleCreateGroup` in `HomeScreen.tsx`:
+- [ ] **Step 1:** Wrap `handleCreateGroup` in `HomeScreen.tsx`:
 
 ```ts
 const handleCreateGroup = async () => {
@@ -1284,9 +1284,9 @@ const handleCreateGroup = async () => {
 };
 ```
 
-- [x] **Step 2:** Same try/catch pattern for `handleJoinGroup`.
+- [ ] **Step 2:** Same try/catch pattern for `handleJoinGroup`.
 
-- [x] **Step 3:** In `AddExpenseScreen.tsx` `handleSave`:
+- [ ] **Step 3:** In `AddExpenseScreen.tsx` `handleSave`:
 
 ```ts
 setSaving(true);
@@ -1303,14 +1303,14 @@ try {
 }
 ```
 
-- [x] **Step 4:** Commit: `fix(error-handling): try/catch on all firebase writes`.
+- [ ] **Step 4:** Commit: `fix(error-handling): try/catch on all firebase writes`.
 
 ## Task 1.13 — Final V0.1 verification
 
-- [x] **Step 1:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 2:** Run `npm test -- --watchAll=false`. Expect: all pass.
-- [x] **Step 3:** Run `npm run lint`. Address any errors (warnings OK).
-- [x] **Step 4:** Commit: `chore: V0.1 verification (typecheck + tests + lint clean)`.
+- [ ] **Step 1:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 2:** Run `npm test -- --watchAll=false`. Expect: all pass.
+- [ ] **Step 3:** Run `npm run lint`. Address any errors (warnings OK).
+- [ ] **Step 4:** Commit: `chore: V0.1 verification (typecheck + tests + lint clean)`.
 
 ---
 
@@ -1327,7 +1327,7 @@ Foundation for live FX. Start with manual rates table that ships with the app.
 - Create: `src/utils/__tests__/currency.test.ts`
 - Modify: `src/types/index.ts` (add per-expense original-currency fields)
 
-- [x] **Step 1:** Extend `Expense` to optionally carry the original-currency entry:
+- [ ] **Step 1:** Extend `Expense` to optionally carry the original-currency entry:
 
 ```ts
 export interface Expense {
@@ -1340,7 +1340,7 @@ export interface Expense {
 }
 ```
 
-- [x] **Step 2:** Add to `currency.ts`:
+- [ ] **Step 2:** Add to `currency.ts`:
 
 ```ts
 /** Static reference rates relative to USD (manual snapshot — refresh quarterly). */
@@ -1366,7 +1366,7 @@ export function convertCents(
 }
 ```
 
-- [x] **Step 3:** Tests for `convertCents`:
+- [ ] **Step 3:** Tests for `convertCents`:
 
 ```ts
 import { convertCents } from '../currency';
@@ -1390,11 +1390,11 @@ describe('convertCents', () => {
 });
 ```
 
-- [x] **Step 4:** In `AddExpenseScreen.tsx`, add a per-expense currency picker (defaults to group currency). When user enters expense in a different currency, on save: convert to group currency for `amountCents`, store originals.
+- [ ] **Step 4:** In `AddExpenseScreen.tsx`, add a per-expense currency picker (defaults to group currency). When user enters expense in a different currency, on save: convert to group currency for `amountCents`, store originals.
 
-- [x] **Step 5:** In `GroupScreen.tsx` `renderExpense`, show a small badge if `originalCurrency && originalCurrency !== group.currency`: e.g., "≈ €18.50 (was $20)".
+- [ ] **Step 5:** In `GroupScreen.tsx` `renderExpense`, show a small badge if `originalCurrency && originalCurrency !== group.currency`: e.g., "≈ €18.50 (was $20)".
 
-- [x] **Step 6:** Run tests. Commit: `feat(currency): multi-currency expense entry with FX conversion`.
+- [ ] **Step 6:** Run tests. Commit: `feat(currency): multi-currency expense entry with FX conversion`.
 
 ## Task 2.2 — Recurring expenses (V1)
 
@@ -1404,7 +1404,7 @@ describe('convertCents', () => {
 - Create: `src/utils/recurring.ts`
 - Create: `src/utils/__tests__/recurring.test.ts`
 
-- [x] **Step 1:** Add to types:
+- [ ] **Step 1:** Add to types:
 ```ts
 export type RecurrenceCadence = 'weekly' | 'biweekly' | 'monthly';
 export interface Recurrence {
@@ -1419,7 +1419,7 @@ export interface Expense {
 }
 ```
 
-- [x] **Step 2:** Create `src/utils/recurring.ts`:
+- [ ] **Step 2:** Create `src/utils/recurring.ts`:
 ```ts
 import { Recurrence } from '../types';
 
@@ -1453,7 +1453,7 @@ export function shouldGenerateToday(rec: Recurrence, now: number): boolean {
 }
 ```
 
-- [x] **Step 3:** Tests:
+- [ ] **Step 3:** Tests:
 ```ts
 import { nextOccurrence } from '../recurring';
 
@@ -1471,13 +1471,13 @@ describe('recurring', () => {
 });
 ```
 
-- [x] **Step 4:** In `AddExpenseScreen.tsx`, add an optional "Repeat" section below the split type with a toggle + cadence picker (weekly / biweekly / monthly / none). On save include `recurrence`.
+- [ ] **Step 4:** In `AddExpenseScreen.tsx`, add an optional "Repeat" section below the split type with a toggle + cadence picker (weekly / biweekly / monthly / none). On save include `recurrence`.
 
-- [x] **Step 5:** In `GroupScreen.tsx` show a small 🔁 badge on recurring expense rows.
+- [ ] **Step 5:** In `GroupScreen.tsx` show a small 🔁 badge on recurring expense rows.
 
 NOTE: actually generating new expense entries on schedule is server-side work (Cloud Function). For V1 we just show the icon + carry the data; auto-generation is V2 — document this in the README.
 
-- [x] **Step 6:** Tests pass. Commit: `feat(recurring): track recurrence on expenses (display only)`.
+- [ ] **Step 6:** Tests pass. Commit: `feat(recurring): track recurrence on expenses (display only)`.
 
 ## Task 2.3 — Share-by-link group join (deep links)
 
@@ -1488,7 +1488,7 @@ NOTE: actually generating new expense entries on schedule is server-side work (C
 - Modify: `src/navigation/AppNavigator.tsx`
 - Modify: `src/screens/GroupScreen.tsx` (use new share format)
 
-- [x] **Step 1:** Add associated domains to `app.config.js`:
+- [ ] **Step 1:** Add associated domains to `app.config.js`:
 ```js
 ios: {
   supportsTablet: false,
@@ -1506,7 +1506,7 @@ android: {
 },
 ```
 
-- [x] **Step 2:** Create `src/utils/deeplink.ts`:
+- [ ] **Step 2:** Create `src/utils/deeplink.ts`:
 ```ts
 /** Builds the share URL for a group join code. */
 export function groupShareUrl(code: string): string {
@@ -1520,7 +1520,7 @@ export function parseJoinUrl(url: string): string | null {
 }
 ```
 
-- [x] **Step 3:** Wire React Navigation's deep-linking config in `AppNavigator.tsx`:
+- [ ] **Step 3:** Wire React Navigation's deep-linking config in `AppNavigator.tsx`:
 ```ts
 import * as Linking from 'expo-linking';
 
@@ -1558,7 +1558,7 @@ function handleJoinIfApplicable(url: string): string {
 
 Pass `linking` to `<NavigationContainer linking={linking} ...>`.
 
-- [x] **Step 4:** In `App.tsx` (or HomeScreen `useEffect`), listen for incoming join URLs and pre-open the join modal with the code:
+- [ ] **Step 4:** In `App.tsx` (or HomeScreen `useEffect`), listen for incoming join URLs and pre-open the join modal with the code:
 
 ```ts
 // In HomeScreen useEffect:
@@ -1577,7 +1577,7 @@ useEffect(() => {
 }, []);
 ```
 
-- [x] **Step 5:** In `GroupScreen.tsx` `handleShare`, use new URL format:
+- [ ] **Step 5:** In `GroupScreen.tsx` `handleShare`, use new URL format:
 ```ts
 const url = groupShareUrl(group.code);
 Share.share({
@@ -1585,7 +1585,7 @@ Share.share({
 });
 ```
 
-- [x] **Step 6:** Commit: `feat(share): deep links + share-by-link group join`.
+- [ ] **Step 6:** Commit: `feat(share): deep links + share-by-link group join`.
 
 ## Task 2.4 — CSV export of group expenses
 
@@ -1594,7 +1594,7 @@ Share.share({
 - Create: `src/utils/__tests__/csv.test.ts`
 - Modify: `src/screens/GroupScreen.tsx`
 
-- [x] **Step 1:** Create `src/utils/csv.ts`:
+- [ ] **Step 1:** Create `src/utils/csv.ts`:
 ```ts
 import { Expense, Member } from '../types';
 import { fromCents } from './money';
@@ -1628,7 +1628,7 @@ export function expensesToCsv(
 }
 ```
 
-- [x] **Step 2:** Tests:
+- [ ] **Step 2:** Tests:
 ```ts
 import { expensesToCsv } from '../csv';
 import type { Expense, Member } from '../../types';
@@ -1654,7 +1654,7 @@ describe('csv', () => {
 });
 ```
 
-- [x] **Step 3:** Add export action to `GroupScreen.tsx` header (next to Invite button):
+- [ ] **Step 3:** Add export action to `GroupScreen.tsx` header (next to Invite button):
 
 ```tsx
 import * as FileSystem from 'expo-file-system';
@@ -1680,7 +1680,7 @@ Install: `npm install expo-file-system expo-sharing`.
 
 Add a small ⤓ button in the header that calls `handleExport`.
 
-- [x] **Step 4:** Tests pass. Commit: `feat(export): CSV export of group expenses`.
+- [ ] **Step 4:** Tests pass. Commit: `feat(export): CSV export of group expenses`.
 
 ## Task 2.5 — Onboarding screen
 
@@ -1690,37 +1690,37 @@ Add a small ⤓ button in the header that calls `handleExport`.
 - Modify: `src/contexts/ProfileContext.tsx` (track `onboarded` flag)
 - Modify: `src/types/index.ts`
 
-- [x] **Step 1:** Add `onboarded?: boolean` to `LocalProfile`. Update store to default `false`.
+- [ ] **Step 1:** Add `onboarded?: boolean` to `LocalProfile`. Update store to default `false`.
 
-- [x] **Step 2:** Create `src/screens/OnboardingScreen.tsx` — three swipeable pages explaining: (1) Create a group, (2) Add expenses, (3) See who owes whom. Final page asks for name (replaces the in-app modal). On finish: `setName(name)` + `updateProfile({ onboarded: true })`.
+- [ ] **Step 2:** Create `src/screens/OnboardingScreen.tsx` — three swipeable pages explaining: (1) Create a group, (2) Add expenses, (3) See who owes whom. Final page asks for name (replaces the in-app modal). On finish: `setName(name)` + `updateProfile({ onboarded: true })`.
 
-- [x] **Step 3:** In `AppNavigator.tsx`, conditionally render Onboarding as the initial screen if `!profile.onboarded`. Use a separate stack.
+- [ ] **Step 3:** In `AppNavigator.tsx`, conditionally render Onboarding as the initial screen if `!profile.onboarded`. Use a separate stack.
 
-- [x] **Step 4:** Remove the in-app `setName` modal from `HomeScreen.tsx` (no longer needed).
+- [ ] **Step 4:** Remove the in-app `setName` modal from `HomeScreen.tsx` (no longer needed).
 
-- [x] **Step 5:** Commit: `feat(onboarding): 3-page intro flow with name capture`.
+- [ ] **Step 5:** Commit: `feat(onboarding): 3-page intro flow with name capture`.
 
 ## Task 2.6 — Percentage split UI
 
 **Files:**
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [x] **Step 1:** Add `'percentage'` to the split-type buttons array (`AddExpenseScreen.tsx:222`).
+- [ ] **Step 1:** Add `'percentage'` to the split-type buttons array (`AddExpenseScreen.tsx:222`).
 
-- [x] **Step 2:** When `splitType === 'percentage'`, render rows similar to custom but with percentage input (basis points internally; display as %). Validate sum = 100% on save.
+- [ ] **Step 2:** When `splitType === 'percentage'`, render rows similar to custom but with percentage input (basis points internally; display as %). Validate sum = 100% on save.
 
-- [x] **Step 3:** Save converts percentages to basis points (10000 = 100%) into `customAmounts`.
+- [ ] **Step 3:** Save converts percentages to basis points (10000 = 100%) into `customAmounts`.
 
-- [x] **Step 4:** Commit: `feat(split): expose percentage split type in UI`.
+- [ ] **Step 4:** Commit: `feat(split): expose percentage split type in UI`.
 
 ## Task 2.7 — Final V1 verification
 
-- [x] **Step 1:** Run `npm run typecheck`. Expect: 0 errors.
-- [x] **Step 2:** Run `npm test -- --watchAll=false`. Expect: all pass.
-- [x] **Step 3:** Run `npm run lint`. Expect: 0 errors (warnings OK).
-- [x] **Step 4:** Open `App.tsx` in Expo (don't auto-launch — note in commit that manual smoke test is recommended).
-- [x] **Step 5:** Update `README.md`: add a "Features" section listing V1 capabilities. Add a "Roadmap" section noting V1.5 (push notifs, IAP, i18n) and V2 (server-side recurring generation, OCR receipts).
-- [x] **Step 6:** Commit: `chore: V1 verification + readme polish`.
+- [ ] **Step 1:** Run `npm run typecheck`. Expect: 0 errors.
+- [ ] **Step 2:** Run `npm test -- --watchAll=false`. Expect: all pass.
+- [ ] **Step 3:** Run `npm run lint`. Expect: 0 errors (warnings OK).
+- [ ] **Step 4:** Open `App.tsx` in Expo (don't auto-launch — note in commit that manual smoke test is recommended).
+- [ ] **Step 5:** Update `README.md`: add a "Features" section listing V1 capabilities. Add a "Roadmap" section noting V1.5 (push notifs, IAP, i18n) and V2 (server-side recurring generation, OCR receipts).
+- [ ] **Step 6:** Commit: `chore: V1 verification + readme polish`.
 
 ---
 
