@@ -146,12 +146,9 @@ EXPO_PUBLIC_FIREBASE_APP_ID=
 **Files:**
 - Modify: `package.json`
 
-- [ ] **Step 1:** Remove these unused deps from `package.json`:
-  - `expo-notifications` (no usage in `src/`)
-  - `@react-native-community/slider` (no usage in `src/`)
-  - `@react-navigation/bottom-tabs` (no usage in `src/`)
-- [ ] **Step 2:** Run `npm install` to refresh `package-lock.json`.
-- [ ] **Step 3:** Commit: `chore(deps): remove unused expo-notifications, slider, bottom-tabs`.
+- [x] **Step 1:** Removed unused deps from `package.json`: `expo-notifications`, `@react-native-community/slider`, `@react-navigation/bottom-tabs`. Also corrected `expo-constants` from v55 (incompatible with Expo SDK 51) to `~16.0.2`.
+- [x] **Step 2:** Cleared node_modules + lockfile and re-ran `npm install`.
+- [x] **Step 3:** Commit: `chore(deps): remove unused expo-notifications, slider, bottom-tabs`.
 
 ## Task 0.4 — Add ESLint + Prettier
 
