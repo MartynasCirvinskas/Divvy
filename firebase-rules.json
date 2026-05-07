@@ -14,7 +14,7 @@
     "codes": {
       "$code": {
         ".read": "auth != null",
-        ".write": "auth != null && !data.exists()"
+        ".write": "auth != null && (!data.exists() || (newData.val() == null && root.child('groups').child(data.val()).child('members').child(auth.uid).exists()))"
       }
     }
   }

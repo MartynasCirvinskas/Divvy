@@ -54,12 +54,13 @@ Anonymous Auth and bind read/write to group membership.
 
 | Command | What |
 |---|---|
-| `npm test` | Run unit tests once (60+ tests) |
+| `npm test` | Run unit tests once (57 tests) |
 | `npm run test:watch` | Watch-mode |
 | `npm run lint` | ESLint |
 | `npm run lint:fix` | Auto-fix ESLint issues |
 | `npm run format` | Prettier |
 | `npm run typecheck` | `tsc --noEmit` |
+| `node scripts/smoke-test.mjs` | End-to-end smoke test against your real Firebase project (requires `.env`) |
 
 ## Monetization (planned)
 
@@ -118,6 +119,11 @@ src/
 - Live FX rates (cached daily) replacing the static `REFERENCE_RATES_USD` table
 - i18n string extraction
 - Accessibility-label sweep
+- **Orphan-code cleanup**: when a group is deleted, the `/codes/$code` mapping
+  currently can't be removed by the deleting member (rule subtlety with
+  cross-path lookups in delete-style writes). Smoke test confirmed this. A
+  scheduled Cloud Function should sweep stale codes nightly. Tracked in
+  `scripts/smoke-test.mjs`.
 
 ### V2
 - Server-side recurring expense generation (Firebase Cloud Function)
