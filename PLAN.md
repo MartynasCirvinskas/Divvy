@@ -1565,7 +1565,7 @@ Share.share({
 - Create: `src/utils/__tests__/csv.test.ts`
 - Modify: `src/screens/GroupScreen.tsx`
 
-- [ ] **Step 1:** Create `src/utils/csv.ts`:
+- [x] **Step 1:** Created `src/utils/csv.ts` with RFC4180-style escaping. Includes original-currency columns when present.
 ```ts
 import { Expense, Member } from '../types';
 import { fromCents } from './money';
@@ -1599,7 +1599,7 @@ export function expensesToCsv(
 }
 ```
 
-- [ ] **Step 2:** Tests:
+- [x] **Step 2:** 5 tests covering headers, quote-escaping, comma-escaping, original-currency columns, empty-list:
 ```ts
 import { expensesToCsv } from '../csv';
 import type { Expense, Member } from '../../types';
@@ -1625,7 +1625,7 @@ describe('csv', () => {
 });
 ```
 
-- [ ] **Step 3:** Add export action to `GroupScreen.tsx` header (next to Invite button):
+- [x] **Step 3:** Added ⬇ icon button next to the Invite button in the GroupScreen header. Writes via `expo-file-system` to cache directory, opens iOS/Android share sheet via `expo-sharing`. Falls back to an Alert if Sharing is unavailable. Pinned `expo-file-system@~17.0.1` and `expo-sharing@~12.0.1` for SDK 51 compatibility.
 
 ```tsx
 import * as FileSystem from 'expo-file-system';
@@ -1651,7 +1651,7 @@ Install: `npm install expo-file-system expo-sharing`.
 
 Add a small ⤓ button in the header that calls `handleExport`.
 
-- [ ] **Step 4:** Tests pass. Commit: `feat(export): CSV export of group expenses`.
+- [x] **Step 4:** Tests: 51/51. Lint: 0. Commit: `feat(export): CSV export of group expenses`.
 
 ## Task 2.5 — Onboarding screen
 

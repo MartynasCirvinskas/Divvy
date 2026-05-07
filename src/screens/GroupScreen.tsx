@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
@@ -12,6 +14,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { Expense, CATEGORY_META } from '../types';
 import { useGroup } from '../hooks/useGroup';
 import { formatCents } from '../utils/money';
+import { expensesToCsv } from '../utils/csv';
 import { useProfile } from '../contexts/ProfileContext';
 import { COLORS, useThemeColors } from '../theme/colors';
 
@@ -39,6 +42,29 @@ export function GroupScreen({ navigation, route }: Props) {
     Share.share({
       message: `Join my group "${group.name}" on Divvy!\nEnter code: ${group.code}\nDownload: https://divvy.app`,
     });
+  };
+
+  const handleExport = async () => {
+    if (!group) return;
+    try {
+      const exps = Object.values(group.expenses ?? {}).sort((a, b) => b.createdAt - a.createdAt);
+      const csv = expensesToCsv(exps, group.members ?? {}, group.currency);
+      const path = `${FileSystem.cacheDirectory}divvy-${group.code}.csv`;
+      await FileSystem.writeAsStringAsync(path, csv, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(path, {
+          mimeType: 'text/csv',
+          dialogTitle: 'Export expenses',
+        });
+      } else {
+        Alert.alert('Sharing unavailable', `CSV saved to ${path}`);
+      }
+    } catch (e) {
+      console.error('[export]', e);
+      Alert.alert('Export failed', 'Try again or restart the app.');
+    }
   };
 
   if (loading) {
@@ -173,6 +199,9 @@ export function GroupScreen({ navigation, route }: Props) {
             Code: {group.code}
           </Text>
         </View>
+        <TouchableOpacity onPress={handleExport} style={styles.iconBtn}>
+          <Text style={styles.iconBtnText}>⬇</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleShare} style={styles.shareBtn}>
           <Text style={styles.shareBtnText}>Invite</Text>
         </TouchableOpacity>
@@ -262,6 +291,11 @@ const styles = StyleSheet.create({
   backIcon: { fontSize: 24, fontWeight: '600' },
   groupTitle: { fontSize: 18, fontWeight: '700' },
   groupCode: { fontSize: 12, marginTop: 1 },
+  iconBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  iconBtnText: { fontSize: 18, fontWeight: '600', color: COLORS.primary },
   shareBtn: {
     backgroundColor: COLORS.primaryBg,
     borderRadius: 10,
