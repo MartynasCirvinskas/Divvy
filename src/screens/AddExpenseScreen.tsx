@@ -4,6 +4,7 @@ import {
   ScrollView, Alert, StatusBar, useColorScheme,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { v4 as uuidv4 } from 'uuid';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
@@ -30,6 +31,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
   const theme = useThemeColors();
   const scheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const { group, addExpense } = useGroup(groupId);
   const { profile } = useProfile();
   const myDeviceId = profile?.deviceId ?? '';
@@ -137,7 +139,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
 
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={[styles.backIcon, { color: theme.onBackground }]}>←</Text>
         </TouchableOpacity>
@@ -296,7 +298,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 60,
     paddingBottom: 12,
   },
   backBtn: { padding: 8 },

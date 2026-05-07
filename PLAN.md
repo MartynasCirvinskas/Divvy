@@ -1183,7 +1183,7 @@ Adjust the `debtCard` flex layout to accommodate the button: change to `gap: 8`,
 - Modify: `src/screens/GroupScreen.tsx`
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [ ] **Step 1:** In each screen, replace the StyleSheet's `paddingTop: 60` with a runtime-computed inset. Add at the top of each component:
+- [x] **Step 1:** Replaced `paddingTop: 60` in all three screens with `paddingTop: insets.top + 8` via `useSafeAreaInsets()`. StyleSheet `paddingTop: 60` removed everywhere.
 
 ```tsx
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -1199,7 +1199,7 @@ Then in the JSX header `View`, use:
 
 Remove `paddingTop: 60` from the StyleSheet for `header`.
 
-- [ ] **Step 2:** Commit: `fix(layout): use safe-area insets instead of hardcoded paddingTop`.
+- [x] **Step 2:** Commit: `fix(layout): use safe-area insets instead of hardcoded paddingTop`.
 
 ## Task 1.11 — Remove dead currency LTL + fix currency symbol fallback
 

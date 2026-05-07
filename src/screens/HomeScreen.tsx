@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Group } from '../types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createGroup, getGroupByCode, addMember, GroupMeta } from '../firebase/db';
 import { useProfile } from '../contexts/ProfileContext';
 import { useGroups } from '../contexts/GroupsContext';
@@ -23,6 +24,7 @@ type ModalType = 'create' | 'join' | 'setName' | null;
 export function HomeScreen({ navigation }: Props) {
   const theme = useThemeColors();
   const scheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const { profile, setName, addGroup } = useProfile();
   const { groups, addLocally } = useGroups();
   const myDeviceId = profile?.deviceId ?? '';
@@ -160,7 +162,7 @@ export function HomeScreen({ navigation }: Props) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
 
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <View>
           <Text style={[styles.title, { color: theme.onBackground }]}>💸 Divvy</Text>
           <Text style={[styles.subtitle, { color: theme.onSurfaceVariant }]}>
@@ -304,7 +306,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 60,
     paddingBottom: 12,
   },
   title: { fontSize: 28, fontWeight: '800' },

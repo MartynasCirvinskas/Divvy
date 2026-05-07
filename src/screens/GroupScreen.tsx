@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -25,6 +26,7 @@ export function GroupScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
   const theme = useThemeColors();
   const scheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const { group, loading, debts, debtsByPair, settleExpense } = useGroup(groupId);
   const [tab, setTab] = useState<Tab>('expenses');
   const { profile } = useProfile();
@@ -146,7 +148,7 @@ export function GroupScreen({ navigation, route }: Props) {
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={[styles.backIcon, { color: theme.onBackground }]}>←</Text>
         </TouchableOpacity>
@@ -240,7 +242,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 60,
     paddingBottom: 12,
     gap: 8,
   },
