@@ -1096,7 +1096,7 @@ const handleSettleExpense = useCallback(async (expenseId: string, memberId: stri
 **Files:**
 - Modify: `src/screens/GroupScreen.tsx`
 
-- [ ] **Step 1:** In `GroupScreen.tsx`, the `debts` rendered are *simplified* (cross-member). For per-debtor settlement to make sense at the UX level, render the option only on the user's own outgoing debts. When user taps "Mark settled" on a debt row where `from === myDeviceId`, call `settleExpense` for **each** unsettled expense where they are a debtor to `to`. Add a helper that finds those expenses.
+- [x] **Step 1:** Added `debtsByPair` `useMemo` to `useGroup` returning a `Map<"from->to", expenseId[]>` of *unsettled* per-debtor obligations.
 
 Add to `useGroup` hook a derived list:
 ```ts
@@ -1120,7 +1120,7 @@ const debtsByPair = useMemo(() => {
 ```
 Add `debtsByPair` to the returned object.
 
-- [ ] **Step 2:** In `GroupScreen.tsx` `renderDebt`, when `isMe`, add a "Mark settled" button:
+- [x] **Step 2:** In `GroupScreen.tsx` `renderDebt`, when `isMe`, render "Mark settled" button + confirm dialog + per-expense settle iteration:
 
 ```tsx
 {isMe && (
@@ -1173,8 +1173,8 @@ settleBtnText: { color: COLORS.primary, fontSize: 12, fontWeight: '700' },
 
 Adjust the `debtCard` flex layout to accommodate the button: change to `gap: 8`, keep `flexDirection: 'row'`, wrap text/amount in a flex column.
 
-- [ ] **Step 3:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 4:** Commit: `feat(group): add settle-up UI per debt row`.
+- [x] **Step 3:** Typecheck: 0 errors. Tests: 30/30.
+- [x] **Step 4:** Commit: `feat(group): add settle-up UI per debt row`.
 
 ## Task 1.10 — Replace `paddingTop: 60` with `useSafeAreaInsets()`
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, FlatList,
-  Share, StatusBar, useColorScheme, ActivityIndicator,
+  Alert, Share, StatusBar, useColorScheme, ActivityIndicator,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
@@ -25,7 +25,7 @@ export function GroupScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
   const theme = useThemeColors();
   const scheme = useColorScheme();
-  const { group, loading, debts } = useGroup(groupId);
+  const { group, loading, debts, debtsByPair, settleExpense } = useGroup(groupId);
   const [tab, setTab] = useState<Tab>('expenses');
   const { profile } = useProfile();
   const myDeviceId = profile?.deviceId ?? '';
@@ -81,22 +81,62 @@ export function GroupScreen({ navigation, route }: Props) {
     );
   };
 
+  const handleMarkSettled = (fromId: string, toId: string) => {
+    const ids = debtsByPair.get(`${fromId}->${toId}`) ?? [];
+    if (ids.length === 0) return;
+    Alert.alert(
+      'Mark as settled?',
+      `This will mark ${ids.length} expense${ids.length === 1 ? '' : 's'} as paid by you to ${members[toId]?.name ?? '?'}.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Confirm',
+          onPress: async () => {
+            for (const id of ids) {
+              try {
+                await settleExpense(id, fromId);
+              } catch (e) {
+                console.error('[settle]', e);
+              }
+            }
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          },
+        },
+      ],
+    );
+  };
+
   const renderDebt = ({ item }: { item: typeof debts[0] }) => {
     const from = members[item.from];
-    const to   = members[item.to];
+    const to = members[item.to];
     const isMe = item.from === myDeviceId;
     return (
-      <View style={[styles.debtCard, { backgroundColor: theme.card, borderColor: isMe ? COLORS.danger : theme.border }]}>
-        <Text style={[styles.debtText, { color: theme.onSurface }]}>
-          <Text style={{ fontWeight: '700', color: isMe ? COLORS.danger : theme.onSurface }}>
-            {from?.name ?? '?'}
+      <View
+        style={[
+          styles.debtCard,
+          { backgroundColor: theme.card, borderColor: isMe ? COLORS.danger : theme.border },
+        ]}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.debtText, { color: theme.onSurface }]}>
+            <Text style={{ fontWeight: '700', color: isMe ? COLORS.danger : theme.onSurface }}>
+              {from?.name ?? '?'}
+            </Text>
+            {' owes '}
+            <Text style={{ fontWeight: '700' }}>{to?.name ?? '?'}</Text>
           </Text>
-          {' owes '}
-          <Text style={{ fontWeight: '700' }}>{to?.name ?? '?'}</Text>
-        </Text>
-        <Text style={[styles.debtAmount, { color: isMe ? COLORS.danger : COLORS.primary }]}>
-          {formatCents(item.amountCents, group.currency)}
-        </Text>
+          <Text style={[styles.debtAmount, { color: isMe ? COLORS.danger : COLORS.primary }]}>
+            {formatCents(item.amountCents, group.currency)}
+          </Text>
+        </View>
+        {isMe && (
+          <TouchableOpacity
+            style={styles.settleBtn}
+            onPress={() => handleMarkSettled(item.from, item.to)}
+          >
+            <Text style={styles.settleBtnText}>Mark settled</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -254,14 +294,21 @@ const styles = StyleSheet.create({
   expAmount: { fontSize: 16, fontWeight: '700' },
   debtCard: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 14,
     borderRadius: 14,
     borderWidth: 1.5,
+    gap: 8,
   },
   debtText: { fontSize: 15 },
-  debtAmount: { fontSize: 16, fontWeight: '700' },
+  debtAmount: { fontSize: 16, fontWeight: '700', marginTop: 2 },
+  settleBtn: {
+    backgroundColor: COLORS.primaryBg,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
+  settleBtnText: { color: COLORS.primary, fontSize: 12, fontWeight: '700' },
   listEmpty: { alignItems: 'center', paddingTop: 40, gap: 12 },
   listEmptyEmoji: { fontSize: 40 },
   listEmptyText: { fontSize: 14, textAlign: 'center' },
