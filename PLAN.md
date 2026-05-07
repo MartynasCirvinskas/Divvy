@@ -705,22 +705,11 @@ export function formatAmountLegacy(amount: number, currency = 'USD'): string {
 - Modify: `src/screens/GroupScreen.tsx`
 - Modify: `src/hooks/useGroup.ts`
 
-- [ ] **Step 1:** In `AddExpenseScreen.tsx`:
-  - Replace `parseFloat(amount.replace(',', '.'))` and the `Math.abs(total - amt) > 0.01` validation with `parseAmountToCents` calls.
-  - Build `Expense` with `amountCents: parseAmountToCents(amount)` instead of `amount`.
-  - Custom amounts: store user input as strings, convert to cents on save with `parseAmountToCents` then validate `sumCents(values) === totalCents` exactly (no tolerance — it's integer).
-  - Equal-share preview uses `formatCents(splitEqualCents(amt, n)[0], group.currency)`.
-  - Import: `import { parseAmountToCents, sumCents, splitEqualCents, formatCents } from '../utils/money';`
-
-- [ ] **Step 2:** In `GroupScreen.tsx`:
-  - Replace `formatAmount(item.amount, ...)` with `formatCents(item.amountCents, ...)`.
-  - Replace `expenses.reduce((s, e) => s + e.amount, 0)` with `expenses.reduce((s, e) => s + e.amountCents, 0)`.
-  - Replace `formatAmount(item.amount, ...)` for debt rows with `formatCents(item.amountCents, ...)`.
-  - Update import: `import { formatCents } from '../utils/money';` (remove `formatAmount` from balances import).
-
-- [ ] **Step 3:** No changes to `useGroup.ts` should be needed — it just relays. Verify with typecheck.
-- [ ] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 5:** Commit: `refactor(screens): consume cents API throughout`.
+- [x] **Step 1:** Updated AddExpenseScreen — parseAmountToCents throughout, exact integer-sum validation for custom split, formatCents in preview, try/catch on save (also addresses Task 1.12 for this screen). Imports added.
+- [x] **Step 2:** Updated GroupScreen — formatCents replaces formatAmount in expense card / debt row / total card. totalCents reducer.
+- [x] **Step 3:** useGroup.ts unchanged (it just relays Expense objects).
+- [x] **Step 4:** Typecheck shows only the pre-existing `dynamic import` error in HomeScreen line 102 — to be removed by Task 1.6 refactor.
+- [x] **Step 5:** Commit: `refactor(screens): consume cents API throughout`.
 
 ## Task 1.5 — Add `ProfileContext` to share profile across screens
 

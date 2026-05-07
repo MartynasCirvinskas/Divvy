@@ -10,7 +10,7 @@ import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Expense, CATEGORY_META } from '../types';
 import { useGroup } from '../hooks/useGroup';
-import { formatAmount } from '../utils/balances';
+import { formatCents } from '../utils/money';
 import { getOrCreateProfile } from '../store/localStore';
 import { COLORS, useThemeColors } from '../theme/colors';
 
@@ -60,7 +60,7 @@ export function GroupScreen({ navigation, route }: Props) {
 
   const members = group.members ?? {};
   const expenses = Object.values(group.expenses ?? {}).sort((a, b) => b.createdAt - a.createdAt);
-  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const totalCents = expenses.reduce((s, e) => s + e.amountCents, 0);
 
   const renderExpense = ({ item }: { item: Expense }) => {
     const payer = members[item.paidById];
@@ -78,7 +78,7 @@ export function GroupScreen({ navigation, route }: Props) {
           </Text>
         </View>
         <Text style={[styles.expAmount, { color: COLORS.primary }]}>
-          {formatAmount(item.amount, group.currency)}
+          {formatCents(item.amountCents, group.currency)}
         </Text>
       </TouchableOpacity>
     );
@@ -98,7 +98,7 @@ export function GroupScreen({ navigation, route }: Props) {
           <Text style={{ fontWeight: '700' }}>{to?.name ?? '?'}</Text>
         </Text>
         <Text style={[styles.debtAmount, { color: isMe ? COLORS.danger : COLORS.primary }]}>
-          {formatAmount(item.amount, group.currency)}
+          {formatCents(item.amountCents, group.currency)}
         </Text>
       </View>
     );
@@ -130,7 +130,7 @@ export function GroupScreen({ navigation, route }: Props) {
       <View style={[styles.totalCard, { backgroundColor: theme.card }]}>
         <Text style={[styles.totalLabel, { color: theme.onSurfaceVariant }]}>Total spent</Text>
         <Text style={[styles.totalAmount, { color: theme.onBackground }]}>
-          {formatAmount(total, group.currency)}
+          {formatCents(totalCents, group.currency)}
         </Text>
         <Text style={[styles.totalMeta, { color: theme.onSurfaceVariant }]}>
           {expenses.length} expense{expenses.length !== 1 ? 's' : ''} · {Object.keys(members).length} members

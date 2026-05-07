@@ -12,6 +12,12 @@ import { Expense, ExpenseCategory, CATEGORY_META, SplitType } from '../types';
 import { useGroup } from '../hooks/useGroup';
 import { getOrCreateProfile } from '../store/localStore';
 import { COLORS, useThemeColors } from '../theme/colors';
+import {
+  parseAmountToCents,
+  splitEqualCents,
+  sumCents,
+  formatCents,
+} from '../utils/money';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'AddExpense'>;
@@ -56,12 +62,12 @@ export function AddExpenseScreen({ navigation, route }: Props) {
   };
 
   const handleSave = async () => {
-    const amt = parseFloat(amount.replace(',', '.'));
+    const amountCents = parseAmountToCents(amount);
     if (!description.trim()) {
       Alert.alert('Description required');
       return;
     }
-    if (isNaN(amt) || amt <= 0) {
+    if (!Number.isFinite(amountCents) || amountCents <= 0) {
       Alert.alert('Invalid amount');
       return;
     }
@@ -73,48 +79,60 @@ export function AddExpenseScreen({ navigation, route }: Props) {
     let finalCustomAmounts: Record<string, number> | undefined;
     if (splitType === 'custom') {
       finalCustomAmounts = {};
-      let total = 0;
+      const perMember: number[] = [];
       for (const id of splitWith) {
-        const v = parseFloat(customAmounts[id] ?? '0');
+        const v = parseAmountToCents(customAmounts[id] ?? '');
+        if (!Number.isFinite(v)) {
+          Alert.alert('Invalid custom amount', `Enter a valid amount for everyone in the split.`);
+          return;
+        }
         finalCustomAmounts[id] = v;
-        total += v;
+        perMember.push(v);
       }
-      if (Math.abs(total - amt) > 0.01) {
-        Alert.alert('Amounts must sum to total', `Total: ${amt.toFixed(2)}, Sum: ${total.toFixed(2)}`);
+      const total = sumCents(perMember);
+      if (total !== amountCents) {
+        Alert.alert(
+          'Amounts must sum to total',
+          `Total: ${formatCents(amountCents, group?.currency ?? 'USD')}, Sum: ${formatCents(total, group?.currency ?? 'USD')}`,
+        );
         return;
       }
     }
 
     setSaving(true);
-    const expense: Expense = {
-      id: uuidv4(),
-      description: description.trim(),
-      amount: amt,
-      currency: group?.currency ?? 'USD',
-      paidById,
-      splitWith,
-      splitType,
-      customAmounts: finalCustomAmounts,
-      category,
-      createdAt: Date.now(),
-      settledBy: [],
-      createdByDeviceId: myDeviceId,
-    };
-
-    await addExpense(expense);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setSaving(false);
-    navigation.goBack();
+    try {
+      const expense: Expense = {
+        id: uuidv4(),
+        description: description.trim(),
+        amountCents,
+        currency: group?.currency ?? 'USD',
+        paidById,
+        splitWith,
+        splitType,
+        customAmounts: finalCustomAmounts,
+        category,
+        createdAt: Date.now(),
+        settledBy: [],
+        createdByDeviceId: myDeviceId,
+      };
+      await addExpense(expense);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      navigation.goBack();
+    } catch (e) {
+      console.error('[add-expense]', e);
+      Alert.alert('Could not save', 'Check your connection and try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const members = Object.values(group?.members ?? {});
 
-  const equalShare = (() => {
-    const amt = parseFloat(amount.replace(',', '.'));
-    if (!isNaN(amt) && amt > 0 && splitWith.length > 0) {
-      return (amt / splitWith.length).toFixed(2);
-    }
-    return null;
+  const equalShareLabel = (() => {
+    const cents = parseAmountToCents(amount);
+    if (!Number.isFinite(cents) || cents <= 0 || splitWith.length === 0) return null;
+    const share = splitEqualCents(cents, splitWith.length)[0];
+    return formatCents(share, group?.currency ?? 'USD');
   })();
 
   return (
@@ -236,10 +254,10 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         </View>
 
         {/* Equal split preview */}
-        {splitType === 'equal' && equalShare && (
+        {splitType === 'equal' && equalShareLabel && (
           <View style={[styles.splitPreview, { backgroundColor: theme.card }]}>
             <Text style={[styles.splitPreviewText, { color: theme.onSurfaceVariant }]}>
-              Each person pays {group?.currency === 'EUR' ? '€' : '$'}{equalShare}
+              Each person pays {equalShareLabel}
             </Text>
           </View>
         )}
