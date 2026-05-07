@@ -25,34 +25,39 @@ A clean, minimal Splitwise alternative built with **React Native + Expo + Fireba
 ### 1. Firebase (free)
 
 1. Go to [console.firebase.google.com](https://console.firebase.google.com)
-2. Create project → Enable **Realtime Database** (test mode)
-3. Project Settings → Add web app → copy config
-4. Paste into `src/firebase/config.ts`
+2. Create project → Enable **Realtime Database** (test mode for first run)
+3. Authentication → Sign-in method → enable **Anonymous**
+4. Project Settings → Add web app → copy the config object
 
-**Database rules** (paste in Firebase console):
-```json
-{
-  "rules": {
-    "groups": {
-      "$groupId": { ".read": true, ".write": true }
-    },
-    "codes": {
-      "$code": { ".read": true, ".write": true }
-    }
-  }
-}
-```
-
-### 2. Run
+### 2. Local environment
 
 ```bash
 git clone https://github.com/MartynasCirvinskas/Divvy.git
 cd Divvy
 npm install
+cp .env.example .env
+# Fill in EXPO_PUBLIC_FIREBASE_* values from step 1
 npx expo start
 ```
 
 Press `a` for Android, `i` for iOS.
+
+### 3. Database rules
+
+Paste the contents of `firebase-rules.json` (created in Phase 1) into Firebase
+console → Realtime Database → Rules. The shipped rules require Anonymous Auth
+and bind read/write to group membership.
+
+### 4. Quality scripts
+
+| Command | What |
+|---|---|
+| `npm test` | Run unit tests once |
+| `npm run test:watch` | Watch-mode |
+| `npm run lint` | ESLint |
+| `npm run lint:fix` | Auto-fix ESLint issues |
+| `npm run format` | Prettier |
+| `npm run typecheck` | `tsc --noEmit` |
 
 ## Monetization
 

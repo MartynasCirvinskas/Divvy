@@ -272,8 +272,8 @@ describe('sanity', () => {
 **Files:**
 - Modify: `README.md`
 
-- [ ] **Step 1:** Add a "Local Setup" section to `README.md` covering: install deps, copy `.env.example`, set Firebase env, paste RTDB rules from `firebase-rules.json` (created in Phase 1), `npm start`. Keep the existing content.
-- [ ] **Step 2:** Commit: `docs: add local setup instructions`.
+- [x] **Step 1:** Updated README setup to env-driven flow + Anonymous Auth + quality scripts.
+- [x] **Step 2:** Commit: `docs: add local setup instructions`.
 
 ---
 
