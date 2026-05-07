@@ -1,5 +1,5 @@
 import {
-  ref, set, get, push, update, remove, onValue, off, DatabaseReference,
+  ref, set, get, update, remove, onValue, off,
 } from 'firebase/database';
 import { db } from './config';
 import { Group, Member, Expense } from '../types';
@@ -61,4 +61,31 @@ export async function settleExpense(
     ? currentSettled.filter((id) => id !== memberId)
     : [...currentSettled, memberId];
   await update(ref(db, `groups/${groupId}/expenses/${expenseId}`), { settledBy: next });
+}
+
+// ─── Group metadata (lightweight read for home screen) ────────────────────────
+
+export interface GroupMeta {
+  id: string;
+  code: string;
+  name: string;
+  emoji: string;
+  currency: string;
+  memberCount: number;
+  createdAt: number;
+}
+
+export async function getGroupMeta(groupId: string): Promise<GroupMeta | null> {
+  const snap = await get(ref(db, `groups/${groupId}`));
+  if (!snap.exists()) return null;
+  const g = snap.val() as Group;
+  return {
+    id: g.id,
+    code: g.code,
+    name: g.name,
+    emoji: g.emoji,
+    currency: g.currency,
+    memberCount: Object.keys(g.members ?? {}).length,
+    createdAt: g.createdAt,
+  };
 }

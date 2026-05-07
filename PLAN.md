@@ -821,7 +821,7 @@ export default function App() {
 - Modify: `src/screens/HomeScreen.tsx`
 - Modify: `src/firebase/db.ts` (add lightweight metadata fetcher)
 
-- [ ] **Step 1:** Add a metadata-only fetcher to `db.ts` (avoids loading full expense list for the home screen):
+- [x] **Step 1:** Added `GroupMeta` interface + `getGroupMeta` fetcher to `db.ts`. Also dropped two unused imports (`push`, `DatabaseReference`) that were lingering ESLint warnings.
 
 ```ts
 // At end of db.ts
@@ -851,7 +851,7 @@ export async function getGroupMeta(groupId: string): Promise<GroupMeta | null> {
 }
 ```
 
-- [ ] **Step 2:** Create `src/contexts/GroupsContext.tsx`:
+- [x] **Step 2:** Create `src/contexts/GroupsContext.tsx`:
 
 ```tsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
@@ -906,7 +906,7 @@ export function useGroups(): Ctx {
 }
 ```
 
-- [ ] **Step 3:** Wrap `App.tsx` with `GroupsProvider` (inside `ProfileProvider`):
+- [x] **Step 3:** Wrap `App.tsx` with `GroupsProvider` (inside `ProfileProvider`):
 
 ```tsx
 <ProfileProvider>
@@ -916,15 +916,10 @@ export function useGroups(): Ctx {
 </ProfileProvider>
 ```
 
-- [ ] **Step 4:** Update `HomeScreen.tsx`:
-  - Replace `useState<Group[]>([])` with `const { groups, loading: groupsLoading, addLocally } = useGroups();`
-  - Replace `setGroups((prev) => [group, ...prev])` after create with `addLocally({ id: group.id, code: group.code, name: group.name, emoji: group.emoji, currency: group.currency, memberCount: 1, createdAt: group.createdAt })`
-  - Same for join: `addLocally({ ... })` using the fetched group's metadata
-  - The `renderGroup` works on `GroupMeta` now — adjust field references (`item.memberCount` instead of `Object.keys(item.members)`)
-
-- [ ] **Step 5:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 6:** Manual verify: kill the simulator, restart, groups list should now reload.
-- [ ] **Step 7:** Commit: `fix(home): reload groups from storage on app start`.
+- [x] **Step 4:** Updated `HomeScreen.tsx` — consumes `useGroups()`, drops local `useState<Group[]>`, both create+join handlers call `addLocally()` with GroupMeta, `renderGroup` uses `item.memberCount`.
+- [x] **Step 5:** Typecheck: 0 errors. Lint: 0 errors, 1 warning.
+- [x] **Step 6:** Manual smoke test deferred to user (requires Firebase env + simulator). The bug fix is structural: groups now load via `GroupsProvider.refresh()` on profile change.
+- [x] **Step 7:** Commit: `fix(home): reload groups from storage on app start`.
 
 ## Task 1.7 — Add Firebase Anonymous Auth + member-bound RTDB rules
 

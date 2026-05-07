@@ -8,8 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Group } from '../types';
-import { createGroup, getGroupByCode, addMember } from '../firebase/db';
+import { createGroup, getGroupByCode, addMember, GroupMeta } from '../firebase/db';
 import { useProfile } from '../contexts/ProfileContext';
+import { useGroups } from '../contexts/GroupsContext';
 import { generateGroupCode } from '../utils/balances';
 import { COLORS, useThemeColors } from '../theme/colors';
 
@@ -23,9 +24,9 @@ export function HomeScreen({ navigation }: Props) {
   const theme = useThemeColors();
   const scheme = useColorScheme();
   const { profile, setName, addGroup } = useProfile();
+  const { groups, addLocally } = useGroups();
   const myDeviceId = profile?.deviceId ?? '';
   const myName = profile?.name ?? '';
-  const [groups, setGroups] = useState<Group[]>([]);
   const [modal, setModal] = useState<ModalType>(
     profile && !profile.name ? 'setName' : null,
   );
@@ -78,7 +79,15 @@ export function HomeScreen({ navigation }: Props) {
       };
       await createGroup(group);
       await addGroup(group.id);
-      setGroups((prev) => [group, ...prev]);
+      addLocally({
+        id: group.id,
+        code: group.code,
+        name: group.name,
+        emoji: group.emoji,
+        currency: group.currency,
+        memberCount: 1,
+        createdAt: group.createdAt,
+      });
       setModal(null);
       setGroupName('');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -112,7 +121,15 @@ export function HomeScreen({ navigation }: Props) {
       }
       await addMember(found.id, { id: myDeviceId, name: myName, joinedAt: Date.now() });
       await addGroup(found.id);
-      setGroups((prev) => [found, ...prev.filter((g) => g.id !== found.id)]);
+      addLocally({
+        id: found.id,
+        code: found.code,
+        name: found.name,
+        emoji: found.emoji,
+        currency: found.currency,
+        memberCount: Object.keys(found.members ?? {}).length + 1,
+        createdAt: found.createdAt,
+      });
       setModal(null);
       setJoinCode('');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -123,7 +140,7 @@ export function HomeScreen({ navigation }: Props) {
     }
   };
 
-  const renderGroup = ({ item }: { item: Group }) => (
+  const renderGroup = ({ item }: { item: GroupMeta }) => (
     <TouchableOpacity
       style={[styles.groupCard, { backgroundColor: theme.card, borderColor: theme.border }]}
       onPress={() => navigation.navigate('Group', { groupId: item.id })}
@@ -132,7 +149,7 @@ export function HomeScreen({ navigation }: Props) {
       <View style={{ flex: 1 }}>
         <Text style={[styles.groupName, { color: theme.onSurface }]}>{item.name}</Text>
         <Text style={[styles.groupMeta, { color: theme.onSurfaceVariant }]}>
-          {Object.keys(item.members ?? {}).length} members · {item.currency}
+          {item.memberCount} members · {item.currency}
         </Text>
       </View>
       <Text style={{ color: theme.onSurfaceVariant, fontSize: 20 }}>›</Text>
