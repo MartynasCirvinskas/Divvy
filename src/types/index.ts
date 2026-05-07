@@ -25,6 +25,12 @@ export interface Expense {
   /** Member ids who marked their own debt on this expense as settled. */
   settledBy: string[];
   createdByDeviceId: string;
+  /** Original amount as entered (cents), preserved when entered in a non-group currency. */
+  originalAmountCents?: number;
+  /** Original currency code as entered. */
+  originalCurrency?: string;
+  /** FX rate used at entry time: 1 unit of `originalCurrency` = `exchangeRate` units of group currency. */
+  exchangeRate?: number;
 }
 
 export type ExpenseCategory =

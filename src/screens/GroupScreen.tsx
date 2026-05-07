@@ -64,6 +64,10 @@ export function GroupScreen({ navigation, route }: Props) {
   const renderExpense = ({ item }: { item: Expense }) => {
     const payer = members[item.paidById];
     const cat = CATEGORY_META[item.category];
+    const showFx =
+      item.originalCurrency &&
+      item.originalAmountCents != null &&
+      item.originalCurrency !== group.currency;
     return (
       <TouchableOpacity
         style={[styles.expenseCard, { backgroundColor: theme.card, borderColor: theme.border }]}
@@ -76,9 +80,16 @@ export function GroupScreen({ navigation, route }: Props) {
             Paid by {payer?.name ?? 'Unknown'} · {new Date(item.createdAt).toLocaleDateString()}
           </Text>
         </View>
-        <Text style={[styles.expAmount, { color: COLORS.primary }]}>
-          {formatCents(item.amountCents, group.currency)}
-        </Text>
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text style={[styles.expAmount, { color: COLORS.primary }]}>
+            {formatCents(item.amountCents, group.currency)}
+          </Text>
+          {showFx && (
+            <Text style={[styles.expFxBadge, { color: theme.onSurfaceVariant }]}>
+              was {formatCents(item.originalAmountCents!, item.originalCurrency!)}
+            </Text>
+          )}
+        </View>
       </TouchableOpacity>
     );
   };
@@ -293,6 +304,7 @@ const styles = StyleSheet.create({
   expDesc: { fontSize: 15, fontWeight: '600' },
   expMeta: { fontSize: 12, marginTop: 2 },
   expAmount: { fontSize: 16, fontWeight: '700' },
+  expFxBadge: { fontSize: 11, marginTop: 2, fontStyle: 'italic' },
   debtCard: {
     flexDirection: 'row',
     alignItems: 'center',

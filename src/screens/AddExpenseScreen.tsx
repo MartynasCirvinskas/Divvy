@@ -19,7 +19,7 @@ import {
   sumCents,
   formatCents,
 } from '../utils/money';
-import { currencySymbol } from '../utils/currency';
+import { currencySymbol, SUPPORTED_CURRENCIES, convertCents } from '../utils/currency';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'AddExpense'>;
@@ -39,12 +39,18 @@ export function AddExpenseScreen({ navigation, route }: Props) {
 
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const [entryCurrency, setEntryCurrency] = useState<string>(group?.currency ?? 'USD');
   const [category, setCategory] = useState<ExpenseCategory>('food');
   const [paidById, setPaidById] = useState('');
   const [splitWith, setSplitWith] = useState<string[]>([]);
   const [splitType, setSplitType] = useState<SplitType>('equal');
   const [customAmounts, setCustomAmounts] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+
+  // Sync entryCurrency to group currency once the group loads
+  useEffect(() => {
+    if (group?.currency) setEntryCurrency(group.currency);
+  }, [group?.currency]);
 
   useEffect(() => {
     if (myDeviceId && !paidById) setPaidById(myDeviceId);
@@ -63,18 +69,37 @@ export function AddExpenseScreen({ navigation, route }: Props) {
   };
 
   const handleSave = async () => {
-    const amountCents = parseAmountToCents(amount);
+    const enteredCents = parseAmountToCents(amount);
     if (!description.trim()) {
       Alert.alert('Description required');
       return;
     }
-    if (!Number.isFinite(amountCents) || amountCents <= 0) {
+    if (!Number.isFinite(enteredCents) || enteredCents <= 0) {
       Alert.alert('Invalid amount');
       return;
     }
     if (splitWith.length === 0) {
       Alert.alert('Select at least one person to split with');
       return;
+    }
+
+    const groupCurrency = group?.currency ?? 'USD';
+    // Convert if user entered in a different currency than the group's
+    let amountCents = enteredCents;
+    let originalAmountCents: number | undefined;
+    let originalCurrency: string | undefined;
+    let exchangeRate: number | undefined;
+    if (entryCurrency !== groupCurrency) {
+      try {
+        const conv = convertCents(enteredCents, entryCurrency, groupCurrency);
+        amountCents = conv.cents;
+        originalAmountCents = enteredCents;
+        originalCurrency = entryCurrency;
+        exchangeRate = conv.rate;
+      } catch (e) {
+        Alert.alert('Currency unsupported', `Cannot convert ${entryCurrency} to ${groupCurrency}.`);
+        return;
+      }
     }
 
     let finalCustomAmounts: Record<string, number> | undefined;
@@ -87,14 +112,20 @@ export function AddExpenseScreen({ navigation, route }: Props) {
           Alert.alert('Invalid custom amount', `Enter a valid amount for everyone in the split.`);
           return;
         }
-        finalCustomAmounts[id] = v;
-        perMember.push(v);
+        // Custom amounts are entered in the same currency as the entry, then converted
+        const cents =
+          entryCurrency !== groupCurrency
+            ? convertCents(v, entryCurrency, groupCurrency).cents
+            : v;
+        finalCustomAmounts[id] = cents;
+        perMember.push(cents);
       }
       const total = sumCents(perMember);
-      if (total !== amountCents) {
+      // Allow ±1 cent tolerance to absorb rounding in FX conversion
+      if (Math.abs(total - amountCents) > 1) {
         Alert.alert(
           'Amounts must sum to total',
-          `Total: ${formatCents(amountCents, group?.currency ?? 'USD')}, Sum: ${formatCents(total, group?.currency ?? 'USD')}`,
+          `Total: ${formatCents(amountCents, groupCurrency)}, Sum: ${formatCents(total, groupCurrency)}`,
         );
         return;
       }
@@ -106,7 +137,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         id: uuidv4(),
         description: description.trim(),
         amountCents,
-        currency: group?.currency ?? 'USD',
+        currency: groupCurrency,
         paidById,
         splitWith,
         splitType,
@@ -115,6 +146,9 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         createdAt: Date.now(),
         settledBy: [],
         createdByDeviceId: myDeviceId,
+        originalAmountCents,
+        originalCurrency,
+        exchangeRate,
       };
       await addExpense(expense);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -153,7 +187,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         {/* Amount */}
         <View style={[styles.amountCard, { backgroundColor: theme.card }]}>
           <Text style={[styles.currencySymbol, { color: theme.onSurfaceVariant }]}>
-            {currencySymbol(group?.currency ?? 'USD')}
+            {currencySymbol(entryCurrency)}
           </Text>
           <TextInput
             style={[styles.amountInput, { color: theme.onBackground }]}
@@ -165,6 +199,40 @@ export function AddExpenseScreen({ navigation, route }: Props) {
             autoFocus
           />
         </View>
+
+        {/* Currency picker (defaults to group currency; FX-converted on save) */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -16 }}>
+          <View style={styles.currencyChipRow}>
+            {SUPPORTED_CURRENCIES.map((c) => (
+              <TouchableOpacity
+                key={c}
+                style={[
+                  styles.currencyChip,
+                  { borderColor: theme.border },
+                  entryCurrency === c && {
+                    backgroundColor: COLORS.primaryBg,
+                    borderColor: COLORS.primary,
+                  },
+                ]}
+                onPress={() => setEntryCurrency(c)}
+              >
+                <Text
+                  style={[
+                    styles.currencyChipText,
+                    { color: entryCurrency === c ? COLORS.primary : theme.onSurface },
+                  ]}
+                >
+                  {c}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+        {entryCurrency !== (group?.currency ?? 'USD') && (
+          <Text style={[styles.fxHint, { color: theme.onSurfaceVariant }]}>
+            Will be converted to {group?.currency ?? 'USD'} at today&apos;s rate.
+          </Text>
+        )}
 
         {/* Description */}
         <TextInput
@@ -314,6 +382,15 @@ const styles = StyleSheet.create({
   },
   currencySymbol: { fontSize: 32, fontWeight: '300', marginRight: 4 },
   amountInput: { fontSize: 48, fontWeight: '800', minWidth: 120 },
+  currencyChipRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingVertical: 4 },
+  currencyChip: {
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  currencyChipText: { fontSize: 13, fontWeight: '600' },
+  fxHint: { fontSize: 12, fontStyle: 'italic', textAlign: 'center', marginTop: -4 },
   input: {
     borderWidth: 1.5,
     borderRadius: 12,

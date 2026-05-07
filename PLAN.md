@@ -1301,7 +1301,7 @@ Foundation for live FX. Start with manual rates table that ships with the app.
 - Create: `src/utils/__tests__/currency.test.ts`
 - Modify: `src/types/index.ts` (add per-expense original-currency fields)
 
-- [ ] **Step 1:** Extend `Expense` to optionally carry the original-currency entry:
+- [x] **Step 1:** Extend `Expense` to optionally carry the original-currency entry:
 
 ```ts
 export interface Expense {
@@ -1314,7 +1314,7 @@ export interface Expense {
 }
 ```
 
-- [ ] **Step 2:** Add to `currency.ts`:
+- [x] **Step 2:** Add `REFERENCE_RATES_USD` + `convertCents` to `currency.ts`:
 
 ```ts
 /** Static reference rates relative to USD (manual snapshot — refresh quarterly). */
@@ -1340,7 +1340,7 @@ export function convertCents(
 }
 ```
 
-- [ ] **Step 3:** Tests for `convertCents`:
+- [x] **Step 3:** Tests for `convertCents` + currencySymbol + SUPPORTED_CURRENCIES (10 cases). All pass.
 
 ```ts
 import { convertCents } from '../currency';
@@ -1364,11 +1364,9 @@ describe('convertCents', () => {
 });
 ```
 
-- [ ] **Step 4:** In `AddExpenseScreen.tsx`, add a per-expense currency picker (defaults to group currency). When user enters expense in a different currency, on save: convert to group currency for `amountCents`, store originals.
-
-- [ ] **Step 5:** In `GroupScreen.tsx` `renderExpense`, show a small badge if `originalCurrency && originalCurrency !== group.currency`: e.g., "≈ €18.50 (was $20)".
-
-- [ ] **Step 6:** Run tests. Commit: `feat(currency): multi-currency expense entry with FX conversion`.
+- [x] **Step 4:** Added a horizontal scroll currency-chip row under the amount card. `entryCurrency` defaults to the group currency. On save, when entryCurrency != groupCurrency, `convertCents` runs and the originals are persisted. Custom amounts get the same FX conversion. Validation tolerance widened to ±1 cent to absorb FX rounding.
+- [x] **Step 5:** `renderExpense` now shows an italic "was €18.50" badge when `originalCurrency` is set and differs from group currency.
+- [x] **Step 6:** Tests: 40/40. Lint: 0 errors. Commit: `feat(currency): multi-currency expense entry with FX conversion`.
 
 ## Task 2.2 — Recurring expenses (V1)
 
