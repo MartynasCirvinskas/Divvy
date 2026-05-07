@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, FlatList,
   TextInput, Alert, Modal, StatusBar, useColorScheme,
@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Group } from '../types';
-import { createGroup, getGroupByCode } from '../firebase/db';
-import { getOrCreateProfile, addGroupToProfile, updateProfile } from '../store/localStore';
+import { createGroup, getGroupByCode, addMember } from '../firebase/db';
+import { useProfile } from '../contexts/ProfileContext';
 import { generateGroupCode } from '../utils/balances';
 import { COLORS, useThemeColors } from '../theme/colors';
 
@@ -22,10 +22,13 @@ type ModalType = 'create' | 'join' | 'setName' | null;
 export function HomeScreen({ navigation }: Props) {
   const theme = useThemeColors();
   const scheme = useColorScheme();
+  const { profile, setName, addGroup } = useProfile();
+  const myDeviceId = profile?.deviceId ?? '';
+  const myName = profile?.name ?? '';
   const [groups, setGroups] = useState<Group[]>([]);
-  const [myDeviceId, setMyDeviceId] = useState('');
-  const [myName, setMyName] = useState('');
-  const [modal, setModal] = useState<ModalType>(null);
+  const [modal, setModal] = useState<ModalType>(
+    profile && !profile.name ? 'setName' : null,
+  );
 
   // Create group form
   const [groupName, setGroupName] = useState('');
@@ -38,19 +41,15 @@ export function HomeScreen({ navigation }: Props) {
   // Name form
   const [nameInput, setNameInput] = useState('');
 
-  useEffect(() => {
-    getOrCreateProfile().then((p) => {
-      setMyDeviceId(p.deviceId);
-      setMyName(p.name);
-      if (!p.name) setModal('setName');
-    });
-  }, []);
+  // Open the name modal once the profile has loaded if name is unset.
+  React.useEffect(() => {
+    if (profile && !profile.name && modal === null) setModal('setName');
+  }, [profile, modal]);
 
   const handleSetName = async () => {
     const name = nameInput.trim();
     if (!name) return;
-    await updateProfile({ name });
-    setMyName(name);
+    await setName(name);
     setModal(null);
   };
 
@@ -59,26 +58,35 @@ export function HomeScreen({ navigation }: Props) {
       Alert.alert('Name required', 'Give your group a name.');
       return;
     }
-    const code = generateGroupCode();
-    const group: Group = {
-      id: uuidv4(),
-      code,
-      name: groupName.trim(),
-      emoji: groupEmoji,
-      currency,
-      members: {
-        [myDeviceId]: { id: myDeviceId, name: myName, joinedAt: Date.now() },
-      },
-      expenses: {},
-      createdAt: Date.now(),
-    };
-    await createGroup(group);
-    await addGroupToProfile(group.id);
-    setGroups((prev) => [group, ...prev]);
-    setModal(null);
-    setGroupName('');
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    navigation.navigate('Group', { groupId: group.id });
+    if (!myDeviceId) {
+      Alert.alert('Loading…', 'Try again in a moment.');
+      return;
+    }
+    try {
+      const code = generateGroupCode();
+      const group: Group = {
+        id: uuidv4(),
+        code,
+        name: groupName.trim(),
+        emoji: groupEmoji,
+        currency,
+        members: {
+          [myDeviceId]: { id: myDeviceId, name: myName, joinedAt: Date.now() },
+        },
+        expenses: {},
+        createdAt: Date.now(),
+      };
+      await createGroup(group);
+      await addGroup(group.id);
+      setGroups((prev) => [group, ...prev]);
+      setModal(null);
+      setGroupName('');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      navigation.navigate('Group', { groupId: group.id });
+    } catch (e) {
+      console.error('[create-group]', e);
+      Alert.alert('Could not create group', 'Check your connection and try again.');
+    }
   };
 
   const handleJoinGroup = async () => {
@@ -87,26 +95,32 @@ export function HomeScreen({ navigation }: Props) {
       Alert.alert('Invalid code', 'Group codes are 6 characters long.');
       return;
     }
-    const found = await getGroupByCode(code);
-    if (!found) {
-      Alert.alert('Not found', 'No group with that code. Double-check and try again.');
+    if (!myDeviceId) {
+      Alert.alert('Loading…', 'Try again in a moment.');
       return;
     }
-    if (found.members[myDeviceId]) {
-      // Already a member — just navigate
+    try {
+      const found = await getGroupByCode(code);
+      if (!found) {
+        Alert.alert('Not found', 'No group with that code. Double-check and try again.');
+        return;
+      }
+      if (found.members?.[myDeviceId]) {
+        setModal(null);
+        navigation.navigate('Group', { groupId: found.id });
+        return;
+      }
+      await addMember(found.id, { id: myDeviceId, name: myName, joinedAt: Date.now() });
+      await addGroup(found.id);
+      setGroups((prev) => [found, ...prev.filter((g) => g.id !== found.id)]);
       setModal(null);
+      setJoinCode('');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.navigate('Group', { groupId: found.id });
-      return;
+    } catch (e) {
+      console.error('[join-group]', e);
+      Alert.alert('Could not join', 'Check your connection and try again.');
     }
-    // Add self as member
-    const { addMember } = await import('../firebase/db');
-    await addMember(found.id, { id: myDeviceId, name: myName, joinedAt: Date.now() });
-    await addGroupToProfile(found.id);
-    setGroups((prev) => [found, ...prev.filter((g) => g.id !== found.id)]);
-    setModal(null);
-    setJoinCode('');
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    navigation.navigate('Group', { groupId: found.id });
   };
 
   const renderGroup = ({ item }: { item: Group }) => (

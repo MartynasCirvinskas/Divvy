@@ -10,7 +10,7 @@ import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Expense, ExpenseCategory, CATEGORY_META, SplitType } from '../types';
 import { useGroup } from '../hooks/useGroup';
-import { getOrCreateProfile } from '../store/localStore';
+import { useProfile } from '../contexts/ProfileContext';
 import { COLORS, useThemeColors } from '../theme/colors';
 import {
   parseAmountToCents,
@@ -31,7 +31,8 @@ export function AddExpenseScreen({ navigation, route }: Props) {
   const theme = useThemeColors();
   const scheme = useColorScheme();
   const { group, addExpense } = useGroup(groupId);
-  const [myDeviceId, setMyDeviceId] = useState('');
+  const { profile } = useProfile();
+  const myDeviceId = profile?.deviceId ?? '';
 
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
@@ -43,11 +44,8 @@ export function AddExpenseScreen({ navigation, route }: Props) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    getOrCreateProfile().then((p) => {
-      setMyDeviceId(p.deviceId);
-      setPaidById(p.deviceId);
-    });
-  }, []);
+    if (myDeviceId && !paidById) setPaidById(myDeviceId);
+  }, [myDeviceId, paidById]);
 
   useEffect(() => {
     if (group) {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, FlatList,
-  Alert, Share, StatusBar, useColorScheme, ActivityIndicator,
+  Share, StatusBar, useColorScheme, ActivityIndicator,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
@@ -11,7 +11,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { Expense, CATEGORY_META } from '../types';
 import { useGroup } from '../hooks/useGroup';
 import { formatCents } from '../utils/money';
-import { getOrCreateProfile } from '../store/localStore';
+import { useProfile } from '../contexts/ProfileContext';
 import { COLORS, useThemeColors } from '../theme/colors';
 
 type Props = {
@@ -25,13 +25,10 @@ export function GroupScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
   const theme = useThemeColors();
   const scheme = useColorScheme();
-  const { group, loading, debts, memberBalances } = useGroup(groupId);
+  const { group, loading, debts } = useGroup(groupId);
   const [tab, setTab] = useState<Tab>('expenses');
-  const [myDeviceId, setMyDeviceId] = useState('');
-
-  useEffect(() => {
-    getOrCreateProfile().then((p) => setMyDeviceId(p.deviceId));
-  }, []);
+  const { profile } = useProfile();
+  const myDeviceId = profile?.deviceId ?? '';
 
   const handleShare = async () => {
     if (!group) return;

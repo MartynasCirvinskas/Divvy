@@ -720,7 +720,7 @@ export function formatAmountLegacy(amount: number, currency = 'USD'): string {
 - Modify: `src/screens/GroupScreen.tsx`
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [ ] **Step 1:** Create `src/contexts/ProfileContext.tsx`:
+- [x] **Step 1:** Create `src/contexts/ProfileContext.tsx` (uses existing localStore — Task 1.7 will inject the auth UID):
 
 ```tsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
@@ -790,7 +790,7 @@ export function useProfile(): Ctx {
 }
 ```
 
-- [ ] **Step 2:** Wrap `App.tsx`:
+- [x] **Step 2:** Wrap `App.tsx` with ProfileProvider:
 ```tsx
 import 'react-native-reanimated';
 import React from 'react';
@@ -809,10 +809,9 @@ export default function App() {
 }
 ```
 
-- [ ] **Step 3:** Replace `getOrCreateProfile` calls in all three screens with `useProfile()`. Remove the `myDeviceId`/`myName` local state — read from `profile.deviceId`/`profile.name`. Remove the `useEffect` that fetched it.
-
-- [ ] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 5:** Commit: `refactor(state): lift profile to ProfileContext`.
+- [x] **Step 3:** Refactored all three screens — removed in-screen profile fetches, derive `myDeviceId/myName` from `useProfile()` context. HomeScreen also: replaced dynamic `await import('../firebase/db')` with static `addMember` import (clears the pre-existing typecheck error), wrapped create+join handlers in try/catch (covers Task 1.12).
+- [x] **Step 4:** Typecheck: 0 errors.
+- [x] **Step 5:** Commit: `refactor(state): lift profile to ProfileContext`.
 
 ## Task 1.6 — Add `GroupsContext` and fix the disappearing-groups bug
 
