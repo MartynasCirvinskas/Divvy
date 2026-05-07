@@ -1235,7 +1235,7 @@ export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'PLN', 'CHF', '
 - Modify: `src/screens/HomeScreen.tsx`
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [ ] **Step 1:** Wrap `handleCreateGroup` in `HomeScreen.tsx`:
+- [x] **Step 1:** Done in Task 1.5 — `handleCreateGroup` wrapped in try/catch with friendly Alert on failure.
 
 ```ts
 const handleCreateGroup = async () => {
@@ -1258,9 +1258,9 @@ const handleCreateGroup = async () => {
 };
 ```
 
-- [ ] **Step 2:** Same try/catch pattern for `handleJoinGroup`.
+- [x] **Step 2:** Done in Task 1.5 — `handleJoinGroup` wrapped in try/catch.
 
-- [ ] **Step 3:** In `AddExpenseScreen.tsx` `handleSave`:
+- [x] **Step 3:** Done in Task 1.4 — `AddExpenseScreen.handleSave` wrapped in try/catch with `setSaving(false)` in finally.
 
 ```ts
 setSaving(true);
@@ -1277,14 +1277,14 @@ try {
 }
 ```
 
-- [ ] **Step 4:** Commit: `fix(error-handling): try/catch on all firebase writes`.
+- [x] **Step 4:** No standalone commit — all error-handling work was folded into the relevant feature commits (Tasks 1.4, 1.5, 1.7) for cohesion.
 
 ## Task 1.13 — Final V0.1 verification
 
-- [ ] **Step 1:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 2:** Run `npm test -- --watchAll=false`. Expect: all pass.
-- [ ] **Step 3:** Run `npm run lint`. Address any errors (warnings OK).
-- [ ] **Step 4:** Commit: `chore: V0.1 verification (typecheck + tests + lint clean)`.
+- [x] **Step 1:** `npx tsc --noEmit` → 0 errors.
+- [x] **Step 2:** `npm test` → 30/30 passed.
+- [x] **Step 3:** `npm run lint` → 0 errors, 0 warnings (exit 0).
+- [x] **Step 4:** Commit: `chore: V0.1 verification (typecheck + tests + lint clean)`.
 
 ---
 
