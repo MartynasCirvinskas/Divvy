@@ -1676,13 +1676,10 @@ Add a small ⤓ button in the header that calls `handleExport`.
 **Files:**
 - Modify: `src/screens/AddExpenseScreen.tsx`
 
-- [ ] **Step 1:** Add `'percentage'` to the split-type buttons array (`AddExpenseScreen.tsx:222`).
-
-- [ ] **Step 2:** When `splitType === 'percentage'`, render rows similar to custom but with percentage input (basis points internally; display as %). Validate sum = 100% on save.
-
-- [ ] **Step 3:** Save converts percentages to basis points (10000 = 100%) into `customAmounts`.
-
-- [ ] **Step 4:** Commit: `feat(split): expose percentage split type in UI`.
+- [x] **Step 1:** Added `'percentage'` button (% Percent) to the split-type chip row.
+- [x] **Step 2:** Render percentage input rows when selected (parallel to custom rows, with a `%` suffix).
+- [x] **Step 3:** Save validates sum = 100% (±1 basis point tolerance for rounding) and converts to basis points (e.g. 33.33% → 3333).
+- [x] **Step 4:** Tests: 46/46. Lint: 0. Commit: `feat(split): expose percentage split type in UI`.
 
 ## Task 2.7 — Final V1 verification
 

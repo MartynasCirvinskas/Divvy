@@ -130,6 +130,29 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         );
         return;
       }
+    } else if (splitType === 'percentage') {
+      // Inputs are percentages as strings (e.g. "33.33"); store as basis points (10000 = 100%)
+      finalCustomAmounts = {};
+      let totalBp = 0;
+      for (const id of splitWith) {
+        const raw = (customAmounts[id] ?? '').trim().replace(',', '.');
+        const pct = parseFloat(raw);
+        if (!Number.isFinite(pct) || pct < 0) {
+          Alert.alert('Invalid percent', 'Enter a valid percentage for everyone in the split.');
+          return;
+        }
+        const bp = Math.round(pct * 100); // 33.33% -> 3333 basis points
+        finalCustomAmounts[id] = bp;
+        totalBp += bp;
+      }
+      // Allow ±1 basis point tolerance for rounding
+      if (Math.abs(totalBp - 10000) > 1) {
+        Alert.alert(
+          'Percentages must sum to 100',
+          `Currently: ${(totalBp / 100).toFixed(2)}%`,
+        );
+        return;
+      }
     }
 
     setSaving(true);
@@ -311,7 +334,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         {/* Split type */}
         <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>How to split</Text>
         <View style={styles.splitTypeRow}>
-          {(['equal', 'custom'] as SplitType[]).map((t) => (
+          {(['equal', 'custom', 'percentage'] as SplitType[]).map((t) => (
             <TouchableOpacity
               key={t}
               style={[styles.splitTypeBtn,
@@ -321,7 +344,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
               onPress={() => setSplitType(t)}
             >
               <Text style={[styles.splitTypeText, { color: splitType === t ? COLORS.primary : theme.onSurface }]}>
-                {t === 'equal' ? '⚖️ Equal' : '✏️ Custom'}
+                {t === 'equal' ? '⚖️ Equal' : t === 'custom' ? '✏️ Custom' : '% Percent'}
               </Text>
             </TouchableOpacity>
           ))}
@@ -375,6 +398,25 @@ export function AddExpenseScreen({ navigation, route }: Props) {
                 onChangeText={(v) => setCustomAmounts((prev) => ({ ...prev, [id]: v }))}
                 keyboardType="decimal-pad"
               />
+            </View>
+          );
+        })}
+
+        {/* Percentage rows */}
+        {splitType === 'percentage' && splitWith.map((id) => {
+          const member = group?.members[id];
+          return (
+            <View key={id} style={styles.customRow}>
+              <Text style={[styles.customName, { color: theme.onSurface }]}>{member?.name}</Text>
+              <TextInput
+                style={[styles.customInput, { color: theme.onSurface, borderColor: theme.border, backgroundColor: theme.inputBg }]}
+                placeholder="0"
+                placeholderTextColor={theme.onSurfaceVariant}
+                value={customAmounts[id] ?? ''}
+                onChangeText={(v) => setCustomAmounts((prev) => ({ ...prev, [id]: v }))}
+                keyboardType="decimal-pad"
+              />
+              <Text style={[styles.percentSign, { color: theme.onSurfaceVariant }]}>%</Text>
             </View>
           );
         })}
@@ -475,6 +517,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 15,
   },
+  percentSign: { fontSize: 16, fontWeight: '600' },
   saveBtn: {
     position: 'absolute',
     bottom: 32,
