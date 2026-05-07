@@ -1376,7 +1376,7 @@ describe('convertCents', () => {
 - Create: `src/utils/recurring.ts`
 - Create: `src/utils/__tests__/recurring.test.ts`
 
-- [ ] **Step 1:** Add to types:
+- [x] **Step 1:** Added `RecurrenceCadence`, `Recurrence`, `Expense.recurrence?` to types:
 ```ts
 export type RecurrenceCadence = 'weekly' | 'biweekly' | 'monthly';
 export interface Recurrence {
@@ -1391,7 +1391,7 @@ export interface Expense {
 }
 ```
 
-- [ ] **Step 2:** Create `src/utils/recurring.ts`:
+- [x] **Step 2:** Created `src/utils/recurring.ts` with `nextOccurrence` + `recurrenceLabel`:
 ```ts
 import { Recurrence } from '../types';
 
@@ -1425,7 +1425,7 @@ export function shouldGenerateToday(rec: Recurrence, now: number): boolean {
 }
 ```
 
-- [ ] **Step 3:** Tests:
+- [x] **Step 3:** 6 tests for `nextOccurrence` + `recurrenceLabel`. All pass.
 ```ts
 import { nextOccurrence } from '../recurring';
 
@@ -1443,13 +1443,12 @@ describe('recurring', () => {
 });
 ```
 
-- [ ] **Step 4:** In `AddExpenseScreen.tsx`, add an optional "Repeat" section below the split type with a toggle + cadence picker (weekly / biweekly / monthly / none). On save include `recurrence`.
+- [x] **Step 4:** AddExpenseScreen has a "Repeat" row with Once / Weekly / Bi-weekly / Monthly chips. `recurrence` (if not null) gets persisted with `startAt: Date.now()`.
+- [x] **Step 5:** GroupScreen prefixes the description with 🔁 when `expense.recurrence` is set.
 
-- [ ] **Step 5:** In `GroupScreen.tsx` show a small 🔁 badge on recurring expense rows.
+NOTE: actually generating new expense entries on schedule is server-side work (Cloud Function). For V1 we just show the icon + carry the data; auto-generation is V2.
 
-NOTE: actually generating new expense entries on schedule is server-side work (Cloud Function). For V1 we just show the icon + carry the data; auto-generation is V2 — document this in the README.
-
-- [ ] **Step 6:** Tests pass. Commit: `feat(recurring): track recurrence on expenses (display only)`.
+- [x] **Step 6:** Tests: 46/46. Lint: 0. Commit: `feat(recurring): track recurrence on expenses (display only)`.
 
 ## Task 2.3 — Share-by-link group join (deep links)
 

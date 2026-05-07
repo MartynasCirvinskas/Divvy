@@ -75,7 +75,9 @@ export function GroupScreen({ navigation, route }: Props) {
       >
         <Text style={styles.catEmoji}>{cat.emoji}</Text>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.expDesc, { color: theme.onSurface }]}>{item.description}</Text>
+          <Text style={[styles.expDesc, { color: theme.onSurface }]}>
+            {item.recurrence ? '🔁 ' : ''}{item.description}
+          </Text>
           <Text style={[styles.expMeta, { color: theme.onSurfaceVariant }]}>
             Paid by {payer?.name ?? 'Unknown'} · {new Date(item.createdAt).toLocaleDateString()}
           </Text>

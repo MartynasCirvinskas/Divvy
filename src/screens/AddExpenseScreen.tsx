@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { Expense, ExpenseCategory, CATEGORY_META, SplitType } from '../types';
+import { Expense, ExpenseCategory, CATEGORY_META, SplitType, RecurrenceCadence, Recurrence } from '../types';
 import { useGroup } from '../hooks/useGroup';
 import { useProfile } from '../contexts/ProfileContext';
 import { COLORS, useThemeColors } from '../theme/colors';
@@ -45,6 +45,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
   const [splitWith, setSplitWith] = useState<string[]>([]);
   const [splitType, setSplitType] = useState<SplitType>('equal');
   const [customAmounts, setCustomAmounts] = useState<Record<string, string>>({});
+  const [recurrence, setRecurrence] = useState<RecurrenceCadence | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Sync entryCurrency to group currency once the group loads
@@ -133,6 +134,9 @@ export function AddExpenseScreen({ navigation, route }: Props) {
 
     setSaving(true);
     try {
+      const recurrenceMeta: Recurrence | undefined = recurrence
+        ? { cadence: recurrence, startAt: Date.now() }
+        : undefined;
       const expense: Expense = {
         id: uuidv4(),
         description: description.trim(),
@@ -149,6 +153,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         originalAmountCents,
         originalCurrency,
         exchangeRate,
+        recurrence: recurrenceMeta,
       };
       await addExpense(expense);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -330,6 +335,31 @@ export function AddExpenseScreen({ navigation, route }: Props) {
             </Text>
           </View>
         )}
+
+        {/* Recurrence */}
+        <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Repeat</Text>
+        <View style={styles.splitTypeRow}>
+          {([null, 'weekly', 'biweekly', 'monthly'] as (RecurrenceCadence | null)[]).map((c) => (
+            <TouchableOpacity
+              key={c ?? 'none'}
+              style={[
+                styles.splitTypeBtn,
+                { borderColor: theme.border },
+                recurrence === c && { backgroundColor: COLORS.primaryBg, borderColor: COLORS.primary },
+              ]}
+              onPress={() => setRecurrence(c)}
+            >
+              <Text
+                style={[
+                  styles.splitTypeText,
+                  { color: recurrence === c ? COLORS.primary : theme.onSurface },
+                ]}
+              >
+                {c === null ? 'Once' : c === 'weekly' ? '🔁 Weekly' : c === 'biweekly' ? '🔁 Bi-weekly' : '🔁 Monthly'}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
         {/* Custom amounts */}
         {splitType === 'custom' && splitWith.map((id) => {

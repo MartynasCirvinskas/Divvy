@@ -8,6 +8,15 @@ export interface Member {
 
 export type SplitType = 'equal' | 'custom' | 'percentage';
 
+export type RecurrenceCadence = 'weekly' | 'biweekly' | 'monthly';
+
+export interface Recurrence {
+  cadence: RecurrenceCadence;
+  startAt: number;
+  /** If absent, recurs indefinitely until the expense is deleted. */
+  endAt?: number;
+}
+
 export interface Expense {
   id: string;
   description: string;
@@ -31,6 +40,8 @@ export interface Expense {
   originalCurrency?: string;
   /** FX rate used at entry time: 1 unit of `originalCurrency` = `exchangeRate` units of group currency. */
   exchangeRate?: number;
+  /** Optional recurrence metadata. Display-only in V1; server-side auto-generation is V2. */
+  recurrence?: Recurrence;
 }
 
 export type ExpenseCategory =
