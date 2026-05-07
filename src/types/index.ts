@@ -11,15 +11,19 @@ export type SplitType = 'equal' | 'custom' | 'percentage';
 export interface Expense {
   id: string;
   description: string;
-  amount: number;         // always in group's base currency
-  currency: string;       // e.g. 'USD', 'EUR'
-  paidById: string;       // member id
-  splitWith: string[];    // member ids (including payer if they share)
+  /** Integer cents in the group's base currency. */
+  amountCents: number;
+  /** Display currency (matches group currency unless explicitly overridden by FX flow). */
+  currency: string;
+  paidById: string;
+  splitWith: string[]; // member ids (including payer if they share)
   splitType: SplitType;
-  customAmounts?: Record<string, number>; // memberId → amount they owe
+  /** For 'custom': memberId → owed cents. For 'percentage': memberId → basis points (1/100 of a %). */
+  customAmounts?: Record<string, number>;
   category: ExpenseCategory;
   createdAt: number;
-  settledBy: string[];    // memberIds who marked this as settled
+  /** Member ids who marked their own debt on this expense as settled. */
+  settledBy: string[];
   createdByDeviceId: string;
 }
 
@@ -33,18 +37,18 @@ export type ExpenseCategory =
   | 'other';
 
 export const CATEGORY_META: Record<ExpenseCategory, { emoji: string; label: string }> = {
-  food:          { emoji: '🍔', label: 'Food & Drink' },
-  transport:     { emoji: '🚗', label: 'Transport' },
+  food: { emoji: '🍔', label: 'Food & Drink' },
+  transport: { emoji: '🚗', label: 'Transport' },
   accommodation: { emoji: '🏠', label: 'Accommodation' },
   entertainment: { emoji: '🎉', label: 'Entertainment' },
-  shopping:      { emoji: '🛍️', label: 'Shopping' },
-  utilities:     { emoji: '💡', label: 'Utilities' },
-  other:         { emoji: '📦', label: 'Other' },
+  shopping: { emoji: '🛍️', label: 'Shopping' },
+  utilities: { emoji: '💡', label: 'Utilities' },
+  other: { emoji: '📦', label: 'Other' },
 };
 
 export interface Group {
   id: string;
-  code: string;           // 6-char join code (e.g. "XK92PL")
+  code: string; // 6-char join code (e.g. "XK92PL")
   name: string;
   emoji: string;
   members: Record<string, Member>;
@@ -56,22 +60,25 @@ export interface Group {
 // ─── Balance types ────────────────────────────────────────────────────────────
 
 export interface Debt {
-  from: string;  // member id
-  to: string;    // member id
-  amount: number;
+  from: string;
+  to: string;
+  /** Integer cents owed in the group's base currency. */
+  amountCents: number;
 }
 
 export interface MemberBalance {
   memberId: string;
-  totalPaid: number;
-  totalOwed: number;
-  net: number;  // positive = others owe you, negative = you owe others
+  totalPaidCents: number;
+  totalOwedCents: number;
+  /** positive = others owe you; negative = you owe others. */
+  netCents: number;
 }
 
 // ─── Local store types ────────────────────────────────────────────────────────
 
 export interface LocalProfile {
-  deviceId: string;   // anonymous user id (UUID, persisted locally)
+  /** Anonymous identity. Phase 1.7 swaps this to the Firebase Anonymous Auth UID. */
+  deviceId: string;
   name: string;
-  joinedGroups: string[];  // group ids
+  joinedGroups: string[];
 }

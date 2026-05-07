@@ -432,7 +432,7 @@ export function formatCents(cents: number, currency = 'USD'): string {
 **Files:**
 - Modify: `src/types/index.ts`
 
-- [ ] **Step 1:** Update `Expense` interface — rename `amount` → `amountCents`, change semantics of `customAmounts`:
+- [x] **Step 1:** Update `Expense` interface — rename `amount` → `amountCents`, change semantics of `customAmounts`:
 
 ```ts
 export interface Expense {
@@ -465,8 +465,8 @@ export interface Debt {
 }
 ```
 
-- [ ] **Step 2:** Run `npm run typecheck`. Expect: many errors across `balances.ts`, `useGroup.ts`, `GroupScreen.tsx`, `AddExpenseScreen.tsx` — these are next tasks. Do NOT fix here.
-- [ ] **Step 3:** Commit: `refactor(types): switch Expense/Debt/Balance to integer cents`.
+- [x] **Step 2:** `npm run typecheck` shows 11 errors across balances/screens — all expected, fixed in Tasks 1.3-1.4.
+- [x] **Step 3:** Commit: `refactor(types): switch Expense/Debt/Balance to integer cents`.
 
 ## Task 1.3 — Migrate `balances.ts` to cents
 
