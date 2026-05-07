@@ -1679,12 +1679,12 @@ Add a small ⤓ button in the header that calls `handleExport`.
 
 ## Task 2.7 — Final V1 verification
 
-- [ ] **Step 1:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 2:** Run `npm test -- --watchAll=false`. Expect: all pass.
-- [ ] **Step 3:** Run `npm run lint`. Expect: 0 errors (warnings OK).
-- [ ] **Step 4:** Open `App.tsx` in Expo (don't auto-launch — note in commit that manual smoke test is recommended).
-- [ ] **Step 5:** Update `README.md`: add a "Features" section listing V1 capabilities. Add a "Roadmap" section noting V1.5 (push notifs, IAP, i18n) and V2 (server-side recurring generation, OCR receipts).
-- [ ] **Step 6:** Commit: `chore: V1 verification + readme polish`.
+- [x] **Step 1:** `npx tsc --noEmit` → 0 errors.
+- [x] **Step 2:** `npm test` → 57/57 passed.
+- [x] **Step 3:** `npm run lint` → exit 0, 0 errors, 0 warnings.
+- [x] **Step 4:** Manual simulator smoke test deferred to user — requires Firebase env + iOS/Android device. Reasoning: structural fixes are validated by unit tests + typecheck; UX validation needs human eyes.
+- [x] **Step 5:** README rewritten — Features section reflects V1 (multi-currency, recurring, share-by-link, CSV, onboarding, settle-up). Architecture diagram updated. Roadmap section added (V1.5 = push/IAP/live FX/i18n/a11y; V2 = server recurring, receipts, activity feed, charts, web companion).
+- [x] **Step 6:** Commit: `chore: V1 verification + readme polish`.
 
 ---
 
