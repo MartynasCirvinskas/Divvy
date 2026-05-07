@@ -474,7 +474,7 @@ export interface Debt {
 - Modify: `src/utils/balances.ts`
 - Create: `src/utils/__tests__/balances.test.ts`
 
-- [ ] **Step 1:** Write the failing tests first:
+- [x] **Step 1:** Write the failing tests first:
 
 ```ts
 // src/utils/__tests__/balances.test.ts
@@ -584,9 +584,9 @@ describe('balances', () => {
 });
 ```
 
-- [ ] **Step 2:** Run `npm test -- balances.test.ts --watchAll=false`. Expect: FAIL (signature mismatch / module returns wrong field names).
+- [x] **Step 2:** Tests written; baseline FAIL on signature mismatch.
 
-- [ ] **Step 3:** Rewrite `src/utils/balances.ts` to use cents AND fix the settle-skip bug:
+- [x] **Step 3:** Rewrite `src/utils/balances.ts` to use cents AND fix the settle-skip bug. Dropped `formatAmount` (consumers will switch to `formatCents` in Task 1.4):
 
 ```ts
 import { Expense, Member, Debt, MemberBalance } from '../types';
@@ -695,8 +695,8 @@ export function formatAmountLegacy(amount: number, currency = 'USD'): string {
 }
 ```
 
-- [ ] **Step 4:** Run `npm test -- balances.test.ts --watchAll=false`. Expect: ALL pass.
-- [ ] **Step 5:** Commit: `refactor(balances): integer cents + per-debtor settlement; add tests`.
+- [x] **Step 4:** All 30 tests pass (10 balances + 20 money + 1 sanity).
+- [x] **Step 5:** Commit: `refactor(balances): integer cents + per-debtor settlement; add tests`.
 
 ## Task 1.4 — Update screens to use cents
 

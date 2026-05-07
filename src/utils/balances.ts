@@ -1,126 +1,104 @@
 import { Expense, Member, Debt, MemberBalance } from '../types';
+import { splitEqualCents } from './money';
 
-// ─── Calculate how much each member owes per expense ─────────────────────────
-
+/** Returns per-debtor cents owed for one expense (excludes settled debtors). */
 function expenseDebts(expense: Expense): Debt[] {
   const debts: Debt[] = [];
-  const { paidById, splitWith, amount, splitType, customAmounts } = expense;
+  const {
+    paidById,
+    splitWith,
+    amountCents,
+    splitType,
+    customAmounts,
+    settledBy = [],
+  } = expense;
+  if (splitWith.length === 0 || amountCents <= 0) return debts;
 
-  if (splitWith.length === 0) return debts;
-
-  const participants = splitWith;
-
+  const settledSet = new Set(settledBy);
   let shares: Record<string, number> = {};
 
   if (splitType === 'equal') {
-    const perPerson = amount / participants.length;
-    for (const id of participants) {
-      shares[id] = perPerson;
-    }
+    const parts = splitEqualCents(amountCents, splitWith.length);
+    splitWith.forEach((id, i) => {
+      shares[id] = parts[i];
+    });
   } else if (splitType === 'custom' && customAmounts) {
     shares = { ...customAmounts };
   } else if (splitType === 'percentage' && customAmounts) {
-    for (const [id, pct] of Object.entries(customAmounts)) {
-      shares[id] = (amount * pct) / 100;
+    // customAmounts is basis points (10000 = 100%)
+    for (const [id, bp] of Object.entries(customAmounts)) {
+      shares[id] = Math.round((amountCents * bp) / 10000);
     }
   }
 
-  // People who owe = everyone in shares except the payer
   for (const [memberId, owed] of Object.entries(shares)) {
-    if (memberId === paidById) continue; // payer doesn't owe themselves
-    if (owed <= 0.001) continue;
-    debts.push({ from: memberId, to: paidById, amount: owed });
+    if (memberId === paidById) continue;
+    if (settledSet.has(memberId)) continue; // per-debtor settlement, NOT all-or-nothing
+    if (owed <= 0) continue;
+    debts.push({ from: memberId, to: paidById, amountCents: owed });
   }
-
   return debts;
 }
 
-// ─── Simplify debts (debt minimization) ──────────────────────────────────────
-
 export function simplifyDebts(debts: Debt[]): Debt[] {
-  // Accumulate net balances
   const net: Record<string, number> = {};
-  for (const { from, to, amount } of debts) {
-    net[from] = (net[from] ?? 0) - amount;
-    net[to]   = (net[to]   ?? 0) + amount;
+  for (const { from, to, amountCents } of debts) {
+    net[from] = (net[from] ?? 0) - amountCents;
+    net[to] = (net[to] ?? 0) + amountCents;
   }
-
   const creditors = Object.entries(net)
-    .filter(([, v]) => v > 0.001)
-    .map(([id, v]) => ({ id, amount: v }));
+    .filter(([, v]) => v > 0)
+    .map(([id, v]) => ({ id, amountCents: v }))
+    .sort((x, y) => y.amountCents - x.amountCents);
   const debtors = Object.entries(net)
-    .filter(([, v]) => v < -0.001)
-    .map(([id, v]) => ({ id, amount: -v }));
+    .filter(([, v]) => v < 0)
+    .map(([id, v]) => ({ id, amountCents: -v }))
+    .sort((x, y) => y.amountCents - x.amountCents);
 
   const result: Debt[] = [];
-  let ci = 0, di = 0;
-
+  let ci = 0;
+  let di = 0;
   while (ci < creditors.length && di < debtors.length) {
-    const credit = creditors[ci];
-    const debt   = debtors[di];
-    const settled = Math.min(credit.amount, debt.amount);
-
-    result.push({ from: debt.id, to: credit.id, amount: settled });
-
-    credit.amount -= settled;
-    debt.amount   -= settled;
-
-    if (credit.amount < 0.001) ci++;
-    if (debt.amount   < 0.001) di++;
+    const settled = Math.min(creditors[ci].amountCents, debtors[di].amountCents);
+    if (settled > 0) {
+      result.push({ from: debtors[di].id, to: creditors[ci].id, amountCents: settled });
+    }
+    creditors[ci].amountCents -= settled;
+    debtors[di].amountCents -= settled;
+    if (creditors[ci].amountCents === 0) ci++;
+    if (debtors[di].amountCents === 0) di++;
   }
-
   return result;
 }
 
-// ─── Full group balance calculation ──────────────────────────────────────────
-
 export function calculateBalances(
   expenses: Record<string, Expense>,
-  members: Record<string, Member>
+  members: Record<string, Member>,
 ): { debts: Debt[]; memberBalances: MemberBalance[] } {
   const allDebts: Debt[] = [];
-
   for (const expense of Object.values(expenses)) {
-    // Skip fully settled expenses
-    if (expense.settledBy?.length >= expense.splitWith.length) continue;
     allDebts.push(...expenseDebts(expense));
   }
-
   const simplified = simplifyDebts(allDebts);
 
-  // Member balance summaries
   const memberBalances: MemberBalance[] = Object.keys(members).map((memberId) => {
-    let totalPaid = 0;
-    let totalOwed = 0;
-
+    let totalPaidCents = 0;
+    let totalOwedCents = 0;
     for (const expense of Object.values(expenses)) {
-      if (expense.paidById === memberId) totalPaid += expense.amount;
+      if (expense.paidById === memberId) totalPaidCents += expense.amountCents;
       const debts = expenseDebts(expense);
       for (const debt of debts) {
-        if (debt.from === memberId) totalOwed += debt.amount;
+        if (debt.from === memberId) totalOwedCents += debt.amountCents;
       }
     }
-
     return {
       memberId,
-      totalPaid,
-      totalOwed,
-      net: totalPaid - totalOwed,
+      totalPaidCents,
+      totalOwedCents,
+      netCents: totalPaidCents - totalOwedCents,
     };
   });
-
   return { debts: simplified, memberBalances };
-}
-
-// ─── Formatting helpers ───────────────────────────────────────────────────────
-
-export function formatAmount(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
 }
 
 export function generateGroupCode(): string {
