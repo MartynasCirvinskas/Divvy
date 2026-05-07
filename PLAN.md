@@ -287,7 +287,7 @@ Fix the 5 critical bugs blocking launch + necessary supporting refactors.
 - Create: `src/utils/money.ts`
 - Create: `src/utils/__tests__/money.test.ts`
 
-- [ ] **Step 1:** Write the failing tests first — create `src/utils/__tests__/money.test.ts`:
+- [x] **Step 1:** Write the failing tests first — create `src/utils/__tests__/money.test.ts`:
 
 ```ts
 import {
@@ -367,9 +367,9 @@ describe('money', () => {
 });
 ```
 
-- [ ] **Step 2:** Run `npm test -- money.test.ts --watchAll=false`. Expect: all FAIL (module not found).
+- [x] **Step 2:** Run `npm test -- money.test.ts`. Confirmed FAIL (module not found).
 
-- [ ] **Step 3:** Create `src/utils/money.ts`:
+- [x] **Step 3:** Create `src/utils/money.ts`:
 
 ```ts
 const MAX_CENTS = 1_000_000_000_00; // $1 billion ceiling — sanity guard
@@ -424,8 +424,8 @@ export function formatCents(cents: number, currency = 'USD'): string {
 }
 ```
 
-- [ ] **Step 4:** Run `npm test -- money.test.ts --watchAll=false`. Expect: ALL pass.
-- [ ] **Step 5:** Commit: `feat(money): add integer-cents utility with full test coverage`.
+- [x] **Step 4:** All 20 money tests + 1 sanity test pass (21/21 total).
+- [x] **Step 5:** Commit: `feat(money): add integer-cents utility with full test coverage`.
 
 ## Task 1.2 — Migrate `Expense.amount` and `customAmounts` to cents (types only)
 
