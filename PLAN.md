@@ -1208,9 +1208,9 @@ Remove `paddingTop: 60` from the StyleSheet for `header`.
 - Modify: `src/screens/AddExpenseScreen.tsx`
 - Create: `src/utils/currency.ts`
 
-- [ ] **Step 1:** Remove `'LTL'` from the currency picker in `HomeScreen.tsx:226`. Add `'PLN'` is already there; add `'CHF'`, `'CAD'`, `'AUD'` for breadth.
+- [x] **Step 1:** Removed dead `'LTL'`. HomeScreen now imports `SUPPORTED_CURRENCIES` (USD/EUR/GBP/JPY/PLN/CHF/CAD/AUD).
 
-- [ ] **Step 2:** Create `src/utils/currency.ts`:
+- [x] **Step 2:** Create `src/utils/currency.ts`:
 ```ts
 export const CURRENCY_SYMBOLS: Record<string, string> = {
   USD: '$', EUR: '€', GBP: '£', JPY: '¥', PLN: 'zł',
@@ -1224,11 +1224,9 @@ export function currencySymbol(code: string): string {
 export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'PLN', 'CHF', 'CAD', 'AUD'];
 ```
 
-- [ ] **Step 3:** In `AddExpenseScreen.tsx`, replace the inline ternary at lines 137-139 with `{currencySymbol(group?.currency ?? 'USD')}`. Replace the same inline ternary in the equal-share preview.
-
-- [ ] **Step 4:** Use `SUPPORTED_CURRENCIES` from `currency.ts` in `HomeScreen.tsx` instead of the hardcoded array.
-
-- [ ] **Step 5:** Commit: `fix(currency): centralize symbols, drop LTL, expand list`.
+- [x] **Step 3:** In `AddExpenseScreen.tsx`, replaced the inline EUR/GBP/$ ternary with `currencySymbol(...)`. The equal-share preview already used `formatCents` (Task 1.4) which handles currency correctly.
+- [x] **Step 4:** HomeScreen consumes `SUPPORTED_CURRENCIES`.
+- [x] **Step 5:** Commit: `fix(currency): centralize symbols, drop LTL, expand list`.
 
 ## Task 1.12 — Wrap all `JSON.parse` and Firebase writes in try/catch
 

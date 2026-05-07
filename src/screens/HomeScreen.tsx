@@ -13,6 +13,7 @@ import { createGroup, getGroupByCode, addMember, GroupMeta } from '../firebase/d
 import { useProfile } from '../contexts/ProfileContext';
 import { useGroups } from '../contexts/GroupsContext';
 import { generateGroupCode } from '../utils/balances';
+import { SUPPORTED_CURRENCIES } from '../utils/currency';
 import { COLORS, useThemeColors } from '../theme/colors';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'> };
@@ -256,7 +257,7 @@ export function HomeScreen({ navigation }: Props) {
 
           <Text style={[styles.fieldLabel, { color: theme.onSurfaceVariant }]}>Currency</Text>
           <View style={styles.currencyRow}>
-            {['USD', 'EUR', 'GBP', 'JPY', 'PLN', 'LTL'].map((c) => (
+            {SUPPORTED_CURRENCIES.map((c) => (
               <TouchableOpacity
                 key={c}
                 style={[styles.currencyBtn, { borderColor: theme.border },

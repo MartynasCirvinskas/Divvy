@@ -19,6 +19,7 @@ import {
   sumCents,
   formatCents,
 } from '../utils/money';
+import { currencySymbol } from '../utils/currency';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'AddExpense'>;
@@ -152,7 +153,7 @@ export function AddExpenseScreen({ navigation, route }: Props) {
         {/* Amount */}
         <View style={[styles.amountCard, { backgroundColor: theme.card }]}>
           <Text style={[styles.currencySymbol, { color: theme.onSurfaceVariant }]}>
-            {group?.currency === 'EUR' ? '€' : group?.currency === 'GBP' ? '£' : '$'}
+            {currencySymbol(group?.currency ?? 'USD')}
           </Text>
           <TextInput
             style={[styles.amountInput, { color: theme.onBackground }]}
