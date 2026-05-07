@@ -13,3 +13,8 @@ web-build/
 *.pem
 android/
 ios/
+
+# Local env (never commit)
+.env
+.env.local
+

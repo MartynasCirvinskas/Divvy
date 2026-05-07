@@ -1,38 +1,30 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Firebase configuration
-//
-// HOW TO SET UP (free):
-// 1. Go to https://console.firebase.google.com
-// 2. Create a new project (e.g. "Divvy App")
-// 3. Enable "Realtime Database" → Start in test mode
-// 4. Go to Project Settings → Your apps → Add web app
-// 5. Copy the firebaseConfig object below and replace the values
-//
-// Security rules for Realtime Database (paste in Firebase console):
-// {
-//   "rules": {
-//     "groups": {
-//       "$groupId": {
-//         ".read": true,
-//         ".write": true
-//       }
-//     }
-//   }
-// }
-// ─────────────────────────────────────────────────────────────────────────────
-
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
+import { getAuth, signInAnonymously } from 'firebase/auth';
+import Constants from 'expo-constants';
 
-const firebaseConfig = {
-  apiKey:            'YOUR_API_KEY',
-  authDomain:        'YOUR_PROJECT_ID.firebaseapp.com',
-  databaseURL:       'https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com',
-  projectId:         'YOUR_PROJECT_ID',
-  storageBucket:     'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId:             'YOUR_APP_ID',
-};
+interface FirebaseConfig {
+  apiKey?: string;
+  authDomain?: string;
+  databaseURL?: string;
+  projectId?: string;
+  storageBucket?: string;
+  messagingSenderId?: string;
+  appId?: string;
+}
 
-const app = initializeApp(firebaseConfig);
+const cfg = ((Constants.expoConfig?.extra as { firebase?: FirebaseConfig })?.firebase ?? {}) as FirebaseConfig;
+
+if (!cfg.apiKey) {
+  console.warn('[divvy] Firebase config missing — set EXPO_PUBLIC_FIREBASE_* env vars (see .env.example).');
+}
+
+const app = getApps().length ? getApps()[0] : initializeApp(cfg);
 export const db = getDatabase(app);
+export const auth = getAuth(app);
+
+export async function ensureAnonAuth(): Promise<string> {
+  if (auth.currentUser) return auth.currentUser.uid;
+  const result = await signInAnonymously(auth);
+  return result.user.uid;
+}
