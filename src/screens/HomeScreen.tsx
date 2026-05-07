@@ -4,6 +4,7 @@ import {
   TextInput, Alert, Modal, StatusBar, useColorScheme,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import * as Linking from 'expo-linking';
 import { v4 as uuidv4 } from 'uuid';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -14,6 +15,7 @@ import { useProfile } from '../contexts/ProfileContext';
 import { useGroups } from '../contexts/GroupsContext';
 import { generateGroupCode } from '../utils/balances';
 import { SUPPORTED_CURRENCIES } from '../utils/currency';
+import { parseJoinUrl } from '../utils/deeplink';
 import { COLORS, useThemeColors } from '../theme/colors';
 
 type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'> };
@@ -49,6 +51,21 @@ export function HomeScreen({ navigation }: Props) {
   React.useEffect(() => {
     if (profile && !profile.name && modal === null) setModal('setName');
   }, [profile, modal]);
+
+  // Listen for deep-link join URLs (cold-start + warm-app)
+  React.useEffect(() => {
+    const openWithCode = (url: string | null) => {
+      if (!url) return;
+      const code = parseJoinUrl(url);
+      if (code) {
+        setJoinCode(code);
+        setModal('join');
+      }
+    };
+    Linking.getInitialURL().then(openWithCode);
+    const sub = Linking.addEventListener('url', ({ url }) => openWithCode(url));
+    return () => sub.remove();
+  }, []);
 
   const handleSetName = async () => {
     const name = nameInput.trim();

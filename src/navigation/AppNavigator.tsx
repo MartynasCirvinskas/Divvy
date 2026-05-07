@@ -19,10 +19,27 @@ const DarkAppTheme = {
   colors: { ...DarkTheme.colors, background: '#0D1117' },
 };
 
+/**
+ * Deep-link config. The `/g/<code>` URLs route to the Home screen, which
+ * extracts the code via parseJoinUrl() and pre-fills the join modal — joining
+ * a group always requires the user to confirm + name, never auto-navigates
+ * to a group they're not a member of yet.
+ */
+const linking = {
+  prefixes: ['divvy://', 'https://divvy.app'],
+  config: {
+    screens: {
+      Home: '',
+      Group: 'group/:groupId',
+      AddExpense: 'group/:groupId/add',
+    },
+  },
+};
+
 export function AppNavigator() {
   const scheme = useColorScheme();
   return (
-    <NavigationContainer theme={scheme === 'dark' ? DarkAppTheme : DefaultTheme}>
+    <NavigationContainer theme={scheme === 'dark' ? DarkAppTheme : DefaultTheme} linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Group" component={GroupScreen} />

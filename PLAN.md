@@ -1459,7 +1459,7 @@ NOTE: actually generating new expense entries on schedule is server-side work (C
 - Modify: `src/navigation/AppNavigator.tsx`
 - Modify: `src/screens/GroupScreen.tsx` (use new share format)
 
-- [ ] **Step 1:** Add associated domains to `app.config.js`:
+- [x] **Step 1:** Added `associatedDomains` (iOS Universal Links) + `intentFilters` (Android App Links) for `divvy.app/g/*` to `app.config.js`.
 ```js
 ios: {
   supportsTablet: false,
@@ -1477,7 +1477,7 @@ android: {
 },
 ```
 
-- [ ] **Step 2:** Create `src/utils/deeplink.ts`:
+- [x] **Step 2:** Created `src/utils/deeplink.ts` with `groupShareUrl(code)` + `parseJoinUrl(url)`. 6 unit tests covering https, custom-scheme, lowercase normalization, malformed input, anchored end-of-code.
 ```ts
 /** Builds the share URL for a group join code. */
 export function groupShareUrl(code: string): string {
@@ -1491,7 +1491,7 @@ export function parseJoinUrl(url: string): string | null {
 }
 ```
 
-- [ ] **Step 3:** Wire React Navigation's deep-linking config in `AppNavigator.tsx`:
+- [x] **Step 3:** Wired React Navigation `linking` config in `AppNavigator.tsx`. Prefixes: `divvy://`, `https://divvy.app`. Decoupled from the join handler — join URLs route through Home, where the user always confirms (consistent with manual code entry).
 ```ts
 import * as Linking from 'expo-linking';
 
@@ -1529,7 +1529,7 @@ function handleJoinIfApplicable(url: string): string {
 
 Pass `linking` to `<NavigationContainer linking={linking} ...>`.
 
-- [ ] **Step 4:** In `App.tsx` (or HomeScreen `useEffect`), listen for incoming join URLs and pre-open the join modal with the code:
+- [x] **Step 4:** HomeScreen listens for incoming URLs (cold-start via `Linking.getInitialURL`, warm via `addEventListener`). Pre-fills `joinCode` and opens the join modal — user confirms then joins, never silently auto-joining.
 
 ```ts
 // In HomeScreen useEffect:
@@ -1548,7 +1548,7 @@ useEffect(() => {
 }, []);
 ```
 
-- [ ] **Step 5:** In `GroupScreen.tsx` `handleShare`, use new URL format:
+- [x] **Step 5:** `GroupScreen.handleShare` now copies the full https URL (not just the code) and shares the URL + name + code:
 ```ts
 const url = groupShareUrl(group.code);
 Share.share({
@@ -1556,7 +1556,7 @@ Share.share({
 });
 ```
 
-- [ ] **Step 6:** Commit: `feat(share): deep links + share-by-link group join`.
+- [x] **Step 6:** Tests: 57/57. Lint: 0. Commit: `feat(share): deep links + share-by-link group join`.
 
 ## Task 2.4 — CSV export of group expenses
 

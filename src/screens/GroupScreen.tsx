@@ -15,6 +15,7 @@ import { Expense, CATEGORY_META } from '../types';
 import { useGroup } from '../hooks/useGroup';
 import { formatCents } from '../utils/money';
 import { expensesToCsv } from '../utils/csv';
+import { groupShareUrl } from '../utils/deeplink';
 import { useProfile } from '../contexts/ProfileContext';
 import { COLORS, useThemeColors } from '../theme/colors';
 
@@ -37,10 +38,11 @@ export function GroupScreen({ navigation, route }: Props) {
 
   const handleShare = async () => {
     if (!group) return;
-    await Clipboard.setStringAsync(group.code);
+    const url = groupShareUrl(group.code);
+    await Clipboard.setStringAsync(url);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     Share.share({
-      message: `Join my group "${group.name}" on Divvy!\nEnter code: ${group.code}\nDownload: https://divvy.app`,
+      message: `Join my Divvy group "${group.name}":\n${url}\n\nCode: ${group.code}`,
     });
   };
 

@@ -15,6 +15,7 @@ module.exports = {
     ios: {
       supportsTablet: false,
       bundleIdentifier: 'com.divvy.app',
+      associatedDomains: ['applinks:divvy.app'],
     },
     android: {
       adaptiveIcon: {
@@ -23,6 +24,14 @@ module.exports = {
       },
       package: 'com.divvy.app',
       permissions: ['VIBRATE'],
+      intentFilters: [
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [{ scheme: 'https', host: 'divvy.app', pathPrefix: '/g' }],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+      ],
     },
     scheme: 'divvy',
     extra: {
