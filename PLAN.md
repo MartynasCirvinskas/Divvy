@@ -236,7 +236,7 @@ android
 - Modify: `package.json`
 - Create: `jest.setup.js`
 
-- [ ] **Step 1:** Update `package.json` jest block:
+- [x] **Step 1:** Update `package.json` jest block:
 ```json
 {
   "jest": {
@@ -249,13 +249,13 @@ android
 }
 ```
 
-- [ ] **Step 2:** Create minimal `jest.setup.js`:
+- [x] **Step 2:** Create minimal `jest.setup.js`:
 ```js
 // Silence noisy warnings in tests
 jest.spyOn(console, 'warn').mockImplementation(() => {});
 ```
 
-- [ ] **Step 3:** Verify a no-op test passes — create `src/utils/__tests__/sanity.test.ts`:
+- [x] **Step 3:** Verify a no-op test passes — create `src/utils/__tests__/sanity.test.ts`:
 ```ts
 describe('sanity', () => {
   it('runs', () => {
@@ -264,8 +264,8 @@ describe('sanity', () => {
 });
 ```
 
-- [ ] **Step 4:** Run `npm test -- --watchAll=false`. Expect: 1 test passes.
-- [ ] **Step 5:** Commit: `chore(test): wire jest with setup + sanity test`.
+- [x] **Step 4:** `npm test` passes — 1/1 (sanity).
+- [x] **Step 5:** Commit: `chore(test): wire jest with setup + sanity test`.
 
 ## Task 0.6 — Update README with setup steps
 
