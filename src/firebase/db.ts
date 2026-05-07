@@ -1,5 +1,5 @@
 import {
-  ref, set, get, update, remove, onValue, off,
+  ref, set, get, update, remove, onValue, off, runTransaction,
 } from 'firebase/database';
 import { db } from './config';
 import { Group, Member, Expense } from '../types';
@@ -7,9 +7,11 @@ import { Group, Member, Expense } from '../types';
 // ─── Group CRUD ───────────────────────────────────────────────────────────────
 
 export async function createGroup(group: Group): Promise<void> {
-  await set(ref(db, `groups/${group.id}`), group);
-  // Also index by code for fast lookups
-  await set(ref(db, `codes/${group.code}`), group.id);
+  // Multi-path atomic write — both succeed or both fail.
+  const updates: Record<string, unknown> = {};
+  updates[`groups/${group.id}`] = group;
+  updates[`codes/${group.code}`] = group.id;
+  await update(ref(db), updates);
 }
 
 export async function getGroupById(groupId: string): Promise<Group | null> {
@@ -55,12 +57,16 @@ export async function settleExpense(
   groupId: string,
   expenseId: string,
   memberId: string,
-  currentSettled: string[]
 ): Promise<void> {
-  const next = currentSettled.includes(memberId)
-    ? currentSettled.filter((id) => id !== memberId)
-    : [...currentSettled, memberId];
-  await update(ref(db, `groups/${groupId}/expenses/${expenseId}`), { settledBy: next });
+  // Transaction reads fresh server state, avoiding the read-modify-write race
+  // when two members settle concurrently.
+  const r = ref(db, `groups/${groupId}/expenses/${expenseId}/settledBy`);
+  await runTransaction(r, (current: string[] | null) => {
+    const list = Array.isArray(current) ? current : [];
+    return list.includes(memberId)
+      ? list.filter((id) => id !== memberId)
+      : [...list, memberId];
+  });
 }
 
 // ─── Group metadata (lightweight read for home screen) ────────────────────────

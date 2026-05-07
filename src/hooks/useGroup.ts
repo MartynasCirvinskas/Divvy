@@ -41,11 +41,9 @@ export function useGroup(groupId: string | null) {
   }, [groupId]);
 
   const handleSettleExpense = useCallback(async (expenseId: string, memberId: string) => {
-    if (!groupId || !group) return;
-    const expense = group.expenses?.[expenseId];
-    if (!expense) return;
-    await settleExpense(groupId, expenseId, memberId, expense.settledBy ?? []);
-  }, [groupId, group]);
+    if (!groupId) return;
+    await settleExpense(groupId, expenseId, memberId);
+  }, [groupId]);
 
   const handleAddMember = useCallback(async (member: Member) => {
     if (!groupId) return;

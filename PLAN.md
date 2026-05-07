@@ -1043,7 +1043,7 @@ This requires you to enable Anonymous sign-in in Firebase console (Auth → Sign
 **Files:**
 - Modify: `src/firebase/db.ts`
 
-- [ ] **Step 1:** Replace `createGroup` with a multi-path atomic update:
+- [x] **Step 1:** Replace `createGroup` with a multi-path atomic update:
 
 ```ts
 import { ref, set, get, push, update, remove, onValue, off, DatabaseReference } from 'firebase/database';
@@ -1058,7 +1058,7 @@ export async function createGroup(group: Group): Promise<void> {
 }
 ```
 
-- [ ] **Step 2:** Replace `settleExpense` with a transaction to avoid the read-modify-write race:
+- [x] **Step 2:** Replace `settleExpense` with a `runTransaction` to avoid the read-modify-write race:
 
 ```ts
 import { runTransaction } from 'firebase/database';
@@ -1079,7 +1079,7 @@ export async function settleExpense(
 }
 ```
 
-- [ ] **Step 3:** Update `useGroup.ts` `handleSettleExpense` signature — remove the `currentSettled` arg passing:
+- [x] **Step 3:** Update `useGroup.ts` `handleSettleExpense` — drop the `currentSettled` argument:
 
 ```ts
 const handleSettleExpense = useCallback(async (expenseId: string, memberId: string) => {
@@ -1088,8 +1088,8 @@ const handleSettleExpense = useCallback(async (expenseId: string, memberId: stri
 }, [groupId]);
 ```
 
-- [ ] **Step 4:** Run `npm run typecheck`. Expect: 0 errors.
-- [ ] **Step 5:** Commit: `fix(db): atomic createGroup + transactional settleExpense`.
+- [x] **Step 4:** Typecheck: 0 errors. Tests: 30/30.
+- [x] **Step 5:** Commit: `fix(db): atomic createGroup + transactional settleExpense`.
 
 ## Task 1.9 — Wire settle-up UI per debt row
 
