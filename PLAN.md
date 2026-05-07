@@ -158,12 +158,9 @@ EXPO_PUBLIC_FIREBASE_APP_ID=
 - Create: `.eslintignore`
 - Modify: `package.json` (add scripts + devDeps)
 
-- [ ] **Step 1:** Install dev deps:
-```bash
-npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-native eslint-config-prettier prettier
-```
+- [x] **Step 1:** Installed dev deps with pinned majors (ESLint 8 + typescript-eslint 7 to match RN 0.74 + Prettier 3).
 
-- [ ] **Step 2:** Create `.eslintrc.js`:
+- [x] **Step 2:** Create `.eslintrc.js` (also disabled `react/no-unescaped-entities` since it's a DOM rule that fires on legitimate apostrophes in RN text):
 ```js
 module.exports = {
   root: true,
@@ -191,7 +188,7 @@ module.exports = {
 };
 ```
 
-- [ ] **Step 3:** Create `.prettierrc`:
+- [x] **Step 3:** Create `.prettierrc`:
 ```json
 {
   "singleQuote": true,
@@ -202,7 +199,7 @@ module.exports = {
 }
 ```
 
-- [ ] **Step 4:** Create `.eslintignore`:
+- [x] **Step 4:** Create `.eslintignore`:
 ```
 node_modules
 .expo
@@ -213,7 +210,7 @@ android
 *.config.js
 ```
 
-- [ ] **Step 5:** Add scripts to `package.json`:
+- [x] **Step 5:** Add scripts to `package.json`:
 ```json
 {
   "scripts": {
@@ -230,8 +227,8 @@ android
 }
 ```
 
-- [ ] **Step 6:** Run `npm run lint` and accept that there will be warnings — do NOT auto-fix everything; just verify ESLint runs without crashing.
-- [ ] **Step 7:** Commit: `chore(lint): add eslint + prettier config`.
+- [x] **Step 6:** `npm run lint` runs clean: 0 errors, 5 warnings (all about unused vars that are addressed by later refactor tasks — left as-is for now).
+- [x] **Step 7:** Commit: `chore(lint): add eslint + prettier config`.
 
 ## Task 0.5 — Wire Jest properly
 
