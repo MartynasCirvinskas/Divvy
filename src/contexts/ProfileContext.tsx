@@ -6,6 +6,7 @@ import {
   addGroupToProfile as persistAddGroup,
   removeGroupFromProfile as persistRemoveGroup,
 } from '../store/localStore';
+import { ensureAnonAuth } from '../firebase/config';
 
 type Ctx = {
   profile: LocalProfile | null;
@@ -24,7 +25,16 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   const reload = useCallback(async () => {
     try {
-      const p = await getOrCreateProfile();
+      let uid: string | undefined;
+      try {
+        uid = await ensureAnonAuth();
+      } catch (authErr) {
+        // If Anonymous Auth fails (network, not enabled in console), fall back
+        // to a local UUID. Reads/writes will still work in dev mode but the
+        // member-bound rules will reject them in prod until auth recovers.
+        console.warn('[profile] anon auth failed, using local UUID', authErr);
+      }
+      const p = await getOrCreateProfile(uid);
       setProfile(p);
     } catch (e) {
       console.error('[profile] load failed', e);

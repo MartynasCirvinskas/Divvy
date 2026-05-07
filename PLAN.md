@@ -929,7 +929,7 @@ export function useGroups(): Ctx {
 - Modify: `src/store/localStore.ts` (accept externally-provided deviceId)
 - Create: `firebase-rules.json`
 
-- [ ] **Step 1:** Update `localStore.ts` so the deviceId can be supplied:
+- [x] **Step 1:** Updated `localStore.ts` — `getOrCreateProfile(authUid?)` now migrates stale deviceId on auth match, and the JSON.parse is wrapped in try/catch (covers Task 1.12 for this file):
 
 ```ts
 export async function getOrCreateProfile(authUid?: string): Promise<LocalProfile> {
@@ -958,7 +958,7 @@ export async function getOrCreateProfile(authUid?: string): Promise<LocalProfile
 }
 ```
 
-- [ ] **Step 2:** Update `ProfileContext.tsx` `reload`:
+- [x] **Step 2:** Update `ProfileContext.tsx` `reload` to call `ensureAnonAuth` first (with graceful fallback if anon auth is unavailable):
 
 ```ts
 const reload = useCallback(async () => {
@@ -977,9 +977,9 @@ const reload = useCallback(async () => {
 
 (Add `import { ensureAnonAuth } from '../firebase/config';`)
 
-- [ ] **Step 3:** Add `firebase` Auth peer to package.json — it's already in `firebase` v10 modular SDK (no extra package). Verify by running `npm run typecheck`.
+- [x] **Step 3:** `firebase/auth` is included in the `firebase` v10 SDK; no extra package needed. Typecheck clean.
 
-- [ ] **Step 4:** Create `firebase-rules.json` with member-bound rules:
+- [x] **Step 4:** Created `firebase-rules.json` with the pragmatic member-bound rules:
 
 ```json
 {
@@ -1035,9 +1035,8 @@ NOTE: The above is a simplification. RTDB rules use `auth.uid` and predicate exp
 
 This requires you to enable Anonymous sign-in in Firebase console (Auth → Sign-in method → Anonymous → Enable). Document this in README.
 
-- [ ] **Step 5:** Update `README.md` setup section to include: enable Anonymous Auth + paste rules from `firebase-rules.json`.
-
-- [ ] **Step 6:** Commit: `feat(auth): enable Firebase anonymous auth + member-bound RTDB rules`.
+- [x] **Step 5:** README setup section was already updated in Task 0.6 to mention enabling Anonymous Auth + pasting `firebase-rules.json` content.
+- [x] **Step 6:** Commit: `feat(auth): enable Firebase anonymous auth + member-bound RTDB rules`.
 
 ## Task 1.8 — Atomic group creation + safe Firebase writes
 

@@ -4,12 +4,29 @@ import { LocalProfile } from '../types';
 
 const PROFILE_KEY = '@divvy_profile';
 
-export async function getOrCreateProfile(): Promise<LocalProfile> {
+/**
+ * Read or create the local profile.
+ * @param authUid Optional Firebase Auth UID. When provided, replaces any
+ *   stale `deviceId` in storage so the persisted identity matches the
+ *   server-side member-bound rules.
+ */
+export async function getOrCreateProfile(authUid?: string): Promise<LocalProfile> {
   const raw = await AsyncStorage.getItem(PROFILE_KEY);
-  if (raw) return JSON.parse(raw) as LocalProfile;
-
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as LocalProfile;
+      if (authUid && parsed.deviceId !== authUid) {
+        const migrated = { ...parsed, deviceId: authUid };
+        await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
+      return parsed;
+    } catch (e) {
+      console.error('[profile] corrupted JSON, recreating', e);
+    }
+  }
   const profile: LocalProfile = {
-    deviceId: uuidv4(),
+    deviceId: authUid ?? uuidv4(),
     name: '',
     joinedGroups: [],
   };
