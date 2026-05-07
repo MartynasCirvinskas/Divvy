@@ -1,10 +1,14 @@
 import React from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useColorScheme } from 'react-native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { GroupScreen } from '../screens/GroupScreen';
 import { AddExpenseScreen } from '../screens/AddExpenseScreen';
+import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { useProfile } from '../contexts/ProfileContext';
+import { COLORS } from '../theme/colors';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -12,19 +16,18 @@ export type RootStackParamList = {
   AddExpense: { groupId: string; expenseId?: string };
 };
 
+export type OnboardingParamList = {
+  Onboarding: undefined;
+};
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const OnboardingStack = createNativeStackNavigator<OnboardingParamList>();
 
 const DarkAppTheme = {
   ...DarkTheme,
   colors: { ...DarkTheme.colors, background: '#0D1117' },
 };
 
-/**
- * Deep-link config. The `/g/<code>` URLs route to the Home screen, which
- * extracts the code via parseJoinUrl() and pre-fills the join modal — joining
- * a group always requires the user to confirm + name, never auto-navigates
- * to a group they're not a member of yet.
- */
 const linking = {
   prefixes: ['divvy://', 'https://divvy.app'],
   config: {
@@ -38,8 +41,38 @@ const linking = {
 
 export function AppNavigator() {
   const scheme = useColorScheme();
+  const { profile, loading } = useProfile();
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: scheme === 'dark' ? '#0D1117' : '#F6F8FA',
+        }}
+      >
+        <ActivityIndicator color={COLORS.primary} />
+      </View>
+    );
+  }
+
+  const navTheme = scheme === 'dark' ? DarkAppTheme : DefaultTheme;
+  const onboarded = profile?.onboarded === true && !!profile.name;
+
+  if (!onboarded) {
+    return (
+      <NavigationContainer theme={navTheme}>
+        <OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+          <OnboardingStack.Screen name="Onboarding" component={OnboardingScreen} />
+        </OnboardingStack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
   return (
-    <NavigationContainer theme={scheme === 'dark' ? DarkAppTheme : DefaultTheme} linking={linking}>
+    <NavigationContainer theme={navTheme} linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Group" component={GroupScreen} />

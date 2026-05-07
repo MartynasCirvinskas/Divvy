@@ -1661,15 +1661,11 @@ Add a small ⤓ button in the header that calls `handleExport`.
 - Modify: `src/contexts/ProfileContext.tsx` (track `onboarded` flag)
 - Modify: `src/types/index.ts`
 
-- [ ] **Step 1:** Add `onboarded?: boolean` to `LocalProfile`. Update store to default `false`.
-
-- [ ] **Step 2:** Create `src/screens/OnboardingScreen.tsx` — three swipeable pages explaining: (1) Create a group, (2) Add expenses, (3) See who owes whom. Final page asks for name (replaces the in-app modal). On finish: `setName(name)` + `updateProfile({ onboarded: true })`.
-
-- [ ] **Step 3:** In `AppNavigator.tsx`, conditionally render Onboarding as the initial screen if `!profile.onboarded`. Use a separate stack.
-
-- [ ] **Step 4:** Remove the in-app `setName` modal from `HomeScreen.tsx` (no longer needed).
-
-- [ ] **Step 5:** Commit: `feat(onboarding): 3-page intro flow with name capture`.
+- [x] **Step 1:** Added `onboarded?: boolean` to `LocalProfile`. Defaults to undefined → AppNavigator treats it as not-onboarded.
+- [x] **Step 2:** Created `OnboardingScreen` — 3 swipeable pages (Create / Add / Settle) plus a 4th name-capture page. Pagination dots. CTA changes from "Next →" to "Get started →" on the final page. On finish: `setName(name)` + `setOnboarded(true)`.
+- [x] **Step 3:** AppNavigator now reads `useProfile()` and conditionally renders an `OnboardingStack` (single screen) when `!profile.onboarded || !profile.name`. Loading spinner during initial profile load.
+- [x] **Step 4:** Removed the in-app setName modal + handler + nameInput state + dead `sheet` style from HomeScreen. ModalType simplified to `'create' | 'join' | null`.
+- [x] **Step 5:** Tests: 57/57. Lint: 0. Commit: `feat(onboarding): 3-page intro flow with name capture`.
 
 ## Task 2.6 — Percentage split UI
 

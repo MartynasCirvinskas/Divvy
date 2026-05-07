@@ -98,4 +98,6 @@ export interface LocalProfile {
   deviceId: string;
   name: string;
   joinedGroups: string[];
+  /** True after the user completes the onboarding flow. */
+  onboarded?: boolean;
 }

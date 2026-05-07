@@ -12,6 +12,7 @@ type Ctx = {
   profile: LocalProfile | null;
   loading: boolean;
   setName: (name: string) => Promise<void>;
+  setOnboarded: (value: boolean) => Promise<void>;
   addGroup: (groupId: string) => Promise<void>;
   removeGroup: (groupId: string) => Promise<void>;
   reload: () => Promise<void>;
@@ -53,6 +54,11 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     setProfile(next);
   }, []);
 
+  const setOnboarded = useCallback(async (value: boolean) => {
+    const next = await persistProfile({ onboarded: value });
+    setProfile(next);
+  }, []);
+
   const addGroup = useCallback(
     async (groupId: string) => {
       await persistAddGroup(groupId);
@@ -70,7 +76,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <ProfileContext.Provider value={{ profile, loading, setName, addGroup, removeGroup, reload }}>
+    <ProfileContext.Provider
+      value={{ profile, loading, setName, setOnboarded, addGroup, removeGroup, reload }}
+    >
       {children}
     </ProfileContext.Provider>
   );

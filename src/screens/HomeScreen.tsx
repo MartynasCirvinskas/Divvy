@@ -22,19 +22,17 @@ type Props = { navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>
 
 const GROUP_EMOJIS = ['✈️','🏠','🎉','🍕','🍻','🎮','🏖️','🎄','💼','🚗','🏕️','🎵'];
 
-type ModalType = 'create' | 'join' | 'setName' | null;
+type ModalType = 'create' | 'join' | null;
 
 export function HomeScreen({ navigation }: Props) {
   const theme = useThemeColors();
   const scheme = useColorScheme();
   const insets = useSafeAreaInsets();
-  const { profile, setName, addGroup } = useProfile();
+  const { profile, addGroup } = useProfile();
   const { groups, addLocally } = useGroups();
   const myDeviceId = profile?.deviceId ?? '';
   const myName = profile?.name ?? '';
-  const [modal, setModal] = useState<ModalType>(
-    profile && !profile.name ? 'setName' : null,
-  );
+  const [modal, setModal] = useState<ModalType>(null);
 
   // Create group form
   const [groupName, setGroupName] = useState('');
@@ -43,14 +41,6 @@ export function HomeScreen({ navigation }: Props) {
 
   // Join group form
   const [joinCode, setJoinCode] = useState('');
-
-  // Name form
-  const [nameInput, setNameInput] = useState('');
-
-  // Open the name modal once the profile has loaded if name is unset.
-  React.useEffect(() => {
-    if (profile && !profile.name && modal === null) setModal('setName');
-  }, [profile, modal]);
 
   // Listen for deep-link join URLs (cold-start + warm-app)
   React.useEffect(() => {
@@ -66,13 +56,6 @@ export function HomeScreen({ navigation }: Props) {
     const sub = Linking.addEventListener('url', ({ url }) => openWithCode(url));
     return () => sub.remove();
   }, []);
-
-  const handleSetName = async () => {
-    const name = nameInput.trim();
-    if (!name) return;
-    await setName(name);
-    setModal(null);
-  };
 
   const handleCreateGroup = async () => {
     if (!groupName.trim()) {
@@ -219,30 +202,6 @@ export function HomeScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      {/* Set name modal */}
-      <Modal visible={modal === 'setName'} transparent animationType="fade">
-        <View style={styles.overlay}>
-          <View style={[styles.sheet, { backgroundColor: theme.surface }]}>
-            <Text style={[styles.sheetTitle, { color: theme.onBackground }]}>What's your name?</Text>
-            <Text style={[styles.sheetSub, { color: theme.onSurfaceVariant }]}>
-              This shows up in your groups so friends know who's who.
-            </Text>
-            <TextInput
-              style={[styles.input, { color: theme.onSurface, borderColor: theme.border, backgroundColor: theme.inputBg }]}
-              placeholder="Your name"
-              placeholderTextColor={theme.onSurfaceVariant}
-              value={nameInput}
-              onChangeText={setNameInput}
-              autoFocus
-              onSubmitEditing={handleSetName}
-            />
-            <TouchableOpacity style={styles.primaryBtn} onPress={handleSetName}>
-              <Text style={styles.primaryBtnText}>Let's go →</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
       {/* Create group modal */}
       <Modal visible={modal === 'create'} transparent animationType="slide">
         <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setModal(null)} />
@@ -381,15 +340,6 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  sheet: {
-    position: 'absolute',
-    top: '30%',
-    left: 24,
-    right: 24,
-    borderRadius: 24,
-    padding: 24,
-    gap: 16,
   },
   bottomSheet: {
     position: 'absolute',
