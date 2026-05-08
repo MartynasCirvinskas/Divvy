@@ -608,7 +608,7 @@ export function useGameSession(groupId: string, sessionId: string | null) {
 - Create: `src/hooks/useGameSessions.ts`
 - Modify: `src/firebase/db.ts` (add list subscription)
 
-- [ ] **Step 1:** Add to `db.ts`:
+- [x] **Step 1:** subscribeToGameSessions already added to db.ts in Task B.3.
 
 ```ts
 export function subscribeToGameSessions(
@@ -629,7 +629,7 @@ export function subscribeToGameSessions(
 }
 ```
 
-- [ ] **Step 2:** Create `src/hooks/useGameSessions.ts`:
+- [x] **Step 2:** Created `src/hooks/useGameSessions.ts` for live list of all sessions in a group.
 
 ```ts
 import { useState, useEffect } from 'react';
@@ -652,8 +652,8 @@ export function useGameSessions(groupId: string) {
 }
 ```
 
-- [ ] **Step 3:** Run gates.
-- [ ] **Step 4:** Commit: `feat(hook): useGameSessions list subscription`.
+- [x] **Step 3:** Typecheck 0, tests 74/74.
+- [x] **Step 4:** Commit: `feat(hook): useGameSessions list subscription`.
 
 ## Task B.6 — `NewGameScreen` — session config UI
 
