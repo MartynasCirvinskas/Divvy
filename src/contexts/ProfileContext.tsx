@@ -59,21 +59,25 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     setProfile(next);
   }, []);
 
-  const addGroup = useCallback(
-    async (groupId: string) => {
-      await persistAddGroup(groupId);
-      await reload();
-    },
-    [reload],
-  );
+  const addGroup = useCallback(async (groupId: string) => {
+    // Persist to AsyncStorage; don't block UI on a full reload.
+    await persistAddGroup(groupId);
+    // Optimistic state update — avoids a full reload() chain (re-runs anon
+    // auth + AsyncStorage read + triggers GroupsContext refresh of all groups).
+    setProfile((p) => {
+      if (!p) return p;
+      if (p.joinedGroups.includes(groupId)) return p;
+      return { ...p, joinedGroups: [...p.joinedGroups, groupId] };
+    });
+  }, []);
 
-  const removeGroup = useCallback(
-    async (groupId: string) => {
-      await persistRemoveGroup(groupId);
-      await reload();
-    },
-    [reload],
-  );
+  const removeGroup = useCallback(async (groupId: string) => {
+    await persistRemoveGroup(groupId);
+    setProfile((p) => {
+      if (!p) return p;
+      return { ...p, joinedGroups: p.joinedGroups.filter((id) => id !== groupId) };
+    });
+  }, []);
 
   return (
     <ProfileContext.Provider

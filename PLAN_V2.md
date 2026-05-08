@@ -120,9 +120,9 @@ When the user creates/joins a group, `ProfileContext.addGroup` calls `persistAdd
 **Files:**
 - Modify: `src/contexts/ProfileContext.tsx`
 
-- [ ] **Step 1:** Open `src/contexts/ProfileContext.tsx`, read it fully.
+- [x] **Step 1:** Open `src/contexts/ProfileContext.tsx`, read it fully.
 
-- [ ] **Step 2:** Replace the `addGroup` callback so it updates state directly:
+- [x] **Step 2:** Replaced `addGroup` to do persistAddGroup + optimistic setProfile update (no reload):
 
 ```ts
 const addGroup = useCallback(
@@ -141,7 +141,7 @@ const addGroup = useCallback(
 );
 ```
 
-- [ ] **Step 3:** Same pattern for `removeGroup`:
+- [x] **Step 3:** Same pattern for `removeGroup`:
 
 ```ts
 const removeGroup = useCallback(
@@ -156,9 +156,8 @@ const removeGroup = useCallback(
 );
 ```
 
-- [ ] **Step 4:** Run gates. Verify `useGroups()` still picks up the new group ID via its `useEffect` on `profile` change.
-
-- [ ] **Step 5:** Commit: `perf(profile): optimistic state update in addGroup/removeGroup`.
+- [x] **Step 4:** Gates pass — useGroups still triggers via profile useEffect because `setProfile` returns a new object reference.
+- [x] **Step 5:** Commit: `perf(profile): optimistic state update in addGroup/removeGroup`.
 
 ## Task A.3 — Selective `GroupsContext.refresh` (delta-only fetch)
 
