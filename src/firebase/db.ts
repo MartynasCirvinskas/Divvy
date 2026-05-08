@@ -2,7 +2,7 @@ import {
   ref, set, get, update, remove, onValue, off, runTransaction,
 } from 'firebase/database';
 import { db } from './config';
-import { Group, Member, Expense } from '../types';
+import { Group, Member, Expense, GameSession } from '../types';
 import { stripUndefined } from '../utils/firebase-safe';
 
 // ─── Group CRUD ───────────────────────────────────────────────────────────────
@@ -95,4 +95,71 @@ export async function getGroupMeta(groupId: string): Promise<GroupMeta | null> {
     memberCount: Object.keys(g.members ?? {}).length,
     createdAt: g.createdAt,
   };
+}
+
+// ─── Game session ops ────────────────────────────────────────────────────────
+
+export async function createGameSession(session: GameSession): Promise<void> {
+  await set(
+    ref(db, `groups/${session.groupId}/games/${session.id}`),
+    stripUndefined(session),
+  );
+}
+
+export async function deleteGameSession(groupId: string, sessionId: string): Promise<void> {
+  await remove(ref(db, `groups/${groupId}/games/${sessionId}`));
+}
+
+/**
+ * Atomically increment one participant's score (delta can be negative).
+ * Uses runTransaction so concurrent score adjustments don't clobber each other.
+ */
+export async function adjustScore(
+  groupId: string,
+  sessionId: string,
+  participantId: string,
+  delta: number,
+): Promise<void> {
+  const r = ref(db, `groups/${groupId}/games/${sessionId}/scores/${participantId}`);
+  await runTransaction(r, (current: number | null) => (current ?? 0) + delta);
+}
+
+export async function endGameSession(
+  groupId: string,
+  sessionId: string,
+  winnerId: string,
+): Promise<void> {
+  await update(ref(db, `groups/${groupId}/games/${sessionId}`), {
+    endedAt: Date.now(),
+    winnerId,
+  });
+}
+
+export function subscribeToGameSession(
+  groupId: string,
+  sessionId: string,
+  onUpdate: (session: GameSession | null) => void,
+): () => void {
+  const r = ref(db, `groups/${groupId}/games/${sessionId}`);
+  const handler = onValue(r, (snap) => {
+    onUpdate(snap.exists() ? (snap.val() as GameSession) : null);
+  });
+  return () => off(r, 'value', handler);
+}
+
+export function subscribeToGameSessions(
+  groupId: string,
+  onUpdate: (sessions: GameSession[]) => void,
+): () => void {
+  const r = ref(db, `groups/${groupId}/games`);
+  const handler = onValue(r, (snap) => {
+    if (!snap.exists()) {
+      onUpdate([]);
+      return;
+    }
+    const map = snap.val() as Record<string, GameSession>;
+    const list = Object.values(map).sort((a, b) => b.createdAt - a.createdAt);
+    onUpdate(list);
+  });
+  return () => off(r, 'value', handler);
 }

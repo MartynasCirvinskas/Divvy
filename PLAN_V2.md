@@ -481,7 +481,7 @@ export function computeWinner(
 **Files:**
 - Modify: `src/firebase/db.ts`
 
-- [ ] **Step 1:** Append game session ops at the bottom of `db.ts`:
+- [x] **Step 1:** Added 6 game session ops to db.ts: createGameSession, deleteGameSession, adjustScore (transactional), endGameSession, subscribeToGameSession, subscribeToGameSessions.
 
 ```ts
 import { GameSession } from '../types';
@@ -538,8 +538,8 @@ export function subscribeToGameSession(
 }
 ```
 
-- [ ] **Step 2:** Run typecheck + tests + lint.
-- [ ] **Step 3:** Commit: `feat(db): game session CRUD + atomic score updates`.
+- [x] **Step 2:** Typecheck 0, tests 74/74, lint 0.
+- [x] **Step 3:** Commit: `feat(db): game session CRUD + atomic score updates`.
 
 ## Task B.4 — `useGameSession` hook
 
