@@ -546,7 +546,7 @@ export function subscribeToGameSession(
 **Files:**
 - Create: `src/hooks/useGameSession.ts`
 
-- [ ] **Step 1:** Create the hook (mirrors `useGroup.ts` pattern):
+- [x] **Step 1:** Created `src/hooks/useGameSession.ts` with subscribe + adjust + end + delete actions.
 
 ```ts
 import { useState, useEffect, useCallback } from 'react';
@@ -599,8 +599,8 @@ export function useGameSession(groupId: string, sessionId: string | null) {
 }
 ```
 
-- [ ] **Step 2:** Run gates.
-- [ ] **Step 3:** Commit: `feat(hook): useGameSession with live subscription + actions`.
+- [x] **Step 2:** Typecheck 0.
+- [x] **Step 3:** Commit: `feat(hook): useGameSession with live subscription + actions`.
 
 ## Task B.5 — `useGameSessions` list hook
 
