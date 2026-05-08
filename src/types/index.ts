@@ -4,6 +4,8 @@ export interface Member {
   id: string;
   name: string;
   joinedAt: number;
+  /** "MM-DD" — optional, used for birthday reminders. */
+  birthday?: string;
 }
 
 export type SplitType = 'equal' | 'custom' | 'percentage';
@@ -110,6 +112,27 @@ export interface GameSession {
   /** Winner id, computed and stored on session end. */
   winnerId?: string;
   createdByDeviceId: string;
+}
+
+// ─── Wishlist types ───────────────────────────────────────────────────────────
+
+export interface WishItem {
+  id: string;
+  title: string;
+  url?: string;
+  priceCents?: number;
+  createdAt: number;
+}
+
+/**
+ * Stored at a separate path from the items so the wishlist owner can't read
+ * who claimed what (preserves the gift surprise). RTDB rules enforce: claims
+ * readable+writable by group members EXCEPT the owner.
+ */
+export interface WishItemClaim {
+  itemId: string;
+  claimedBy: string; // memberId
+  claimedAt: number;
 }
 
 // ─── Local store types ────────────────────────────────────────────────────────

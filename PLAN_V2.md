@@ -1267,7 +1267,7 @@ This is bonus scope. If Ralph hits iteration limits or runs into blockers, stop 
 **Files:**
 - Modify: `src/types/index.ts`
 
-- [ ] **Step 1:** Add types:
+- [x] **Step 1:** Added WishItem, WishItemClaim types + Member.birthday field.
 
 ```ts
 export interface WishItem {
@@ -1302,8 +1302,8 @@ export interface Member {
 }
 ```
 
-- [ ] **Step 2:** Run typecheck.
-- [ ] **Step 3:** Commit: `feat(types): wishlist + claims + member birthday`.
+- [x] **Step 2:** Typecheck 0.
+- [x] **Step 3:** Commit: `feat(types): wishlist + claims + member birthday`.
 
 ## Task C.2 — Wishlist DB ops with split-path privacy
 
