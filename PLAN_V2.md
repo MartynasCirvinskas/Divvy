@@ -215,13 +215,13 @@ Game scoring doesn't strictly need notifications, but birthday reminders and Sec
 - Modify: `app.config.js` (re-add `POST_NOTIFICATIONS` permission)
 - Append: `USER_TODO.md`
 
-- [ ] **Step 1:** Install expo-notifications + expo-device pinned to SDK 51:
+- [x] **Step 1:** Installed `expo-notifications@~0.28.19` + `expo-device@~6.0.2`.
 
 ```bash
 npm install expo-notifications@~0.28.19 expo-device@~6.0.2
 ```
 
-- [ ] **Step 2:** Create `src/notifications/index.ts`:
+- [x] **Step 2:** Create `src/notifications/index.ts` (note: SDK 51's expo-notifications uses `{ trigger: { date } }` rather than `SchedulableTriggerInputTypes.DATE`):
 
 ```ts
 import * as Notifications from 'expo-notifications';
@@ -286,7 +286,7 @@ export async function cancelScheduled(id: string): Promise<void> {
 }
 ```
 
-- [ ] **Step 3:** Update `app.config.js` `android.permissions` to include `POST_NOTIFICATIONS`:
+- [x] **Step 3:** Added `POST_NOTIFICATIONS` to `app.config.js` android.permissions.
 
 ```js
 android: {
@@ -296,7 +296,7 @@ android: {
 },
 ```
 
-- [ ] **Step 4:** Update `App.tsx` to request permission once on first launch (after onboarding):
+- [x] **Step 4:** Updated `App.tsx` to call `ensureNotificationPermission()` once via useEffect.
 
 ```tsx
 // near other imports
@@ -311,7 +311,7 @@ useEffect(() => {
 }, []);
 ```
 
-- [ ] **Step 5:** Append the following to `USER_TODO.md` (create if missing):
+- [x] **Step 5:** Appended FCM/google-services.json setup section to `USER_TODO.md`.
 
 ```markdown
 ### Push notifications (V2 features)
@@ -333,9 +333,8 @@ Local scheduled notifications (birthday reminders set on the user's own
 device, settle-up nudges) work without any of the above.
 ```
 
-- [ ] **Step 6:** Run gates.
-
-- [ ] **Step 7:** Commit: `feat(notifications): scaffold expo-notifications + permission flow`.
+- [x] **Step 6:** Tests 64/64, typecheck 0, lint 0.
+- [x] **Step 7:** Commit: `feat(notifications): scaffold expo-notifications + permission flow`.
 
 ## Task A.5 — Phase A verify
 

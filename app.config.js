@@ -23,7 +23,7 @@ module.exports = {
         backgroundColor: '#0D1117',
       },
       package: 'com.divvy.app',
-      permissions: ['VIBRATE'],
+      permissions: ['VIBRATE', 'POST_NOTIFICATIONS'],
       intentFilters: [
         {
           action: 'VIEW',

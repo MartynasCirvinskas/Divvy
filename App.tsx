@@ -2,14 +2,22 @@
 // `uuid` works on Hermes. Without this, uuid.v4() throws at runtime.
 import 'react-native-get-random-values';
 import 'react-native-reanimated';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { registerRootComponent } from 'expo';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { ProfileProvider } from './src/contexts/ProfileContext';
 import { GroupsProvider } from './src/contexts/GroupsContext';
+import { ensureNotificationPermission } from './src/notifications';
 
 function App() {
+  // Request notification permission once on launch. Fire-and-forget — failure
+  // (denied permission, no device, no FCM creds yet) is fine; the rest of the
+  // app still works.
+  useEffect(() => {
+    ensureNotificationPermission().catch(() => {});
+  }, []);
+
   return (
     <SafeAreaProvider>
       <ProfileProvider>
