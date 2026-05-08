@@ -54,3 +54,51 @@ onboarding). On Android 13+ you'll see the OS prompt; tap Allow. On
 emulator (where `Device.isDevice` is false), `ensureNotificationPermission()`
 short-circuits and returns null — local-schedule still works for in-app
 testing.
+
+### V2 Game Scoring — manual smoke test on emulator
+
+Native code changed (added `expo-notifications`, `expo-device`,
+`react-native-android-widget` is NOT yet added — that's V1.1 widget work).
+You need to rebuild before the new screens render.
+
+```powershell
+# 1. Make sure emulator is up
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:Path = "$env:Path;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\emulator;$env:JAVA_HOME\bin"
+
+# Either reuse the running emulator or restart it:
+emulator -avd Divvy_Pixel -no-snapshot-save -no-boot-anim
+# (in another terminal once it boots:)
+adb devices
+
+# 2. From the project root:
+cd C:\Users\marty\OneDrive\Desktop\Agents\Idea_Executor\Divvy
+npm run android   # ~2-3 min with warm Gradle cache
+```
+
+**Test the new flow:**
+1. Open a group (or create one)
+2. Tap the **🎲 Games** tab
+3. Tap **＋ New Game** at the bottom
+4. Enter "Catan", pick "⬆️ Most wins", select yourself + add a team named "Reds"
+5. Tap **▶ Start Game**
+6. On the live scoreboard: tap +1, +5, -1 buttons — scores update via runTransaction
+7. Tap **End Game** → confirm
+8. Verify the winner banner shows
+9. Tap back → see session in the Games tab list with 🏆 prefix and winner name
+10. To test multi-phone: open the same group on a second emulator/device, start a game on phone A, watch scoreboard update on phone B as you tap on A
+
+If anything looks wrong: `adb logcat -d -t 100 ReactNativeJS:* "*:S"` shows recent JS errors.
+
+### V1.1 widget work (deferred per WIDGET_RESEARCH.md)
+
+When ready (post-launch, ~6-8 weeks out), the widget plan is:
+
+1. `npm install react-native-android-widget` + add its config plugin to
+   `app.config.js`
+2. Build a Balance + Quick-Add widget per the spec in WIDGET_RESEARCH.md
+3. ~1 week solo dev effort
+
+Skipped for now — pre-launch widget ROI is near zero. Detailed plan is in
+WIDGET_RESEARCH.md.

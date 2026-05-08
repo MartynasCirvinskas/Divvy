@@ -1230,9 +1230,9 @@ const styles = StyleSheet.create({
 
 ## Task B.9 — Phase B verify + emulator smoke test
 
-- [ ] **Step 1:** Run `npx tsc --noEmit && npm test && npm run lint`. All green.
+- [x] **Step 1:** Typecheck 0, tests 74/74, lint 0.
 
-- [ ] **Step 2:** Append to `USER_TODO.md`:
+- [x] **Step 2:** Appended Game Scoring smoke test instructions to `USER_TODO.md`.
 
 ```markdown
 ### V2 Game Scoring — manual smoke test on emulator
@@ -1254,7 +1254,7 @@ After the Ralph run completes, run on emulator:
 If anything looks wrong, check `adb logcat -d -t 100 ReactNativeJS:* "*:S"`.
 ```
 
-- [ ] **Step 3:** Commit: `chore: Phase B verify (game scoring shippable)`.
+- [x] **Step 3:** Commit: `chore: Phase B verify (game scoring shippable)`.
 
 ---
 
