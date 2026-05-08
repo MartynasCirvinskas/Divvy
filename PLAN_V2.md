@@ -1195,7 +1195,7 @@ const styles = StyleSheet.create({
 **Files:**
 - Modify: `src/screens/GroupScreen.tsx`
 
-- [ ] **Step 1:** Add a new tab `'games'` alongside `'expenses'` and `'balances'`. Show a list of game sessions (using `useGameSessions(groupId)`) with their winner/in-progress status. Add a "+ New Game" button at the bottom that navigates to `NewGame` route.
+- [x] **Step 1:** Wired games tab into GroupScreen with useGameSessions, FlatList rendering session cards (🎲 in-progress / 🏆 finished with winner name), context-sensitive FAB (Add Expense on expenses tab, New Game on games tab, none on balances). Empty state: "No games yet. Start one for your next game night!"
 
   Replace the `Tab` type:
   ```ts
@@ -1225,9 +1225,8 @@ const styles = StyleSheet.create({
 
   Replace the floating "+ Add Expense" FAB to be context-sensitive: when on `expenses` tab → "+ Add Expense", when on `games` tab → "+ New Game" (navigates to `NewGame`), when on `balances` tab → no FAB.
 
-- [ ] **Step 2:** Run gates. Manual smoke test recommended (build + run on emulator).
-
-- [ ] **Step 3:** Commit: `feat(group): wire Games tab + new-game FAB`.
+- [x] **Step 2:** Typecheck 0, tests 74/74, lint 0. Manual smoke test in USER_TODO.
+- [x] **Step 3:** Commit: `feat(group): wire Games tab + new-game FAB`.
 
 ## Task B.9 — Phase B verify + emulator smoke test
 

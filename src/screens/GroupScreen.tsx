@@ -11,11 +11,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { Expense, CATEGORY_META } from '../types';
+import { Expense, CATEGORY_META, GameSession } from '../types';
 import { useGroup } from '../hooks/useGroup';
+import { useGameSessions } from '../hooks/useGameSessions';
 import { formatCents } from '../utils/money';
 import { expensesToCsv } from '../utils/csv';
 import { groupShareUrl } from '../utils/deeplink';
+import { isParticipantTeam, teamLabel } from '../utils/scoring';
 import { useProfile } from '../contexts/ProfileContext';
 import { COLORS, useThemeColors } from '../theme/colors';
 
@@ -24,7 +26,7 @@ type Props = {
   route: RouteProp<RootStackParamList, 'Group'>;
 };
 
-type Tab = 'expenses' | 'balances';
+type Tab = 'expenses' | 'balances' | 'games';
 
 export function GroupScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
@@ -32,6 +34,7 @@ export function GroupScreen({ navigation, route }: Props) {
   const scheme = useColorScheme();
   const insets = useSafeAreaInsets();
   const { group, loading, debts, debtsByPair, settleExpense } = useGroup(groupId);
+  const { sessions: gameSessions } = useGameSessions(groupId);
   const [tab, setTab] = useState<Tab>('expenses');
   const { profile } = useProfile();
   const myDeviceId = profile?.deviceId ?? '';
@@ -222,21 +225,21 @@ export function GroupScreen({ navigation, route }: Props) {
 
       {/* Tabs */}
       <View style={[styles.tabs, { borderColor: theme.border }]}>
-        {(['expenses', 'balances'] as Tab[]).map((t) => (
+        {(['expenses', 'balances', 'games'] as Tab[]).map((t) => (
           <TouchableOpacity
             key={t}
             style={[styles.tab, tab === t && { borderBottomColor: COLORS.primary, borderBottomWidth: 2 }]}
             onPress={() => setTab(t)}
           >
             <Text style={[styles.tabText, { color: tab === t ? COLORS.primary : theme.onSurfaceVariant }]}>
-              {t === 'expenses' ? '📋 Expenses' : '⚖️ Balances'}
+              {t === 'expenses' ? '📋 Expenses' : t === 'balances' ? '⚖️ Balances' : '🎲 Games'}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
       {/* Content */}
-      {tab === 'expenses' ? (
+      {tab === 'expenses' && (
         <FlatList
           data={expenses}
           renderItem={renderExpense}
@@ -251,7 +254,8 @@ export function GroupScreen({ navigation, route }: Props) {
             </View>
           }
         />
-      ) : (
+      )}
+      {tab === 'balances' && (
         <FlatList
           data={debts}
           renderItem={renderDebt}
@@ -267,14 +271,63 @@ export function GroupScreen({ navigation, route }: Props) {
           }
         />
       )}
+      {tab === 'games' && (
+        <FlatList
+          data={gameSessions}
+          keyExtractor={(g) => g.id}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }: { item: GameSession }) => {
+            const winner = item.winnerId
+              ? (isParticipantTeam(item.winnerId)
+                  ? teamLabel(item.winnerId)
+                  : members[item.winnerId]?.name ?? '?')
+              : null;
+            return (
+              <TouchableOpacity
+                style={[styles.gameCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+                onPress={() => navigation.navigate('GameSession', { groupId, sessionId: item.id })}
+              >
+                <Text style={styles.gameEmoji}>{item.endedAt ? '🏆' : '🎲'}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.gameName, { color: theme.onSurface }]}>{item.name}</Text>
+                  <Text style={[styles.gameMeta, { color: theme.onSurfaceVariant }]}>
+                    {item.endedAt
+                      ? `${winner} won · ${new Date(item.endedAt).toLocaleDateString()}`
+                      : `In progress · ${item.participants.length} players`}
+                  </Text>
+                </View>
+                <Text style={{ color: theme.onSurfaceVariant, fontSize: 20 }}>›</Text>
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <View style={styles.listEmpty}>
+              <Text style={styles.listEmptyEmoji}>🎲</Text>
+              <Text style={[styles.listEmptyText, { color: theme.onSurfaceVariant }]}>
+                No games yet. Start one for your next game night!
+              </Text>
+            </View>
+          }
+        />
+      )}
 
-      {/* Add expense FAB */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate('AddExpense', { groupId })}
-      >
-        <Text style={styles.fabText}>＋ Add Expense</Text>
-      </TouchableOpacity>
+      {/* Context-sensitive FAB */}
+      {tab === 'expenses' && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate('AddExpense', { groupId })}
+        >
+          <Text style={styles.fabText}>＋ Add Expense</Text>
+        </TouchableOpacity>
+      )}
+      {tab === 'games' && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate('NewGame', { groupId })}
+        >
+          <Text style={styles.fabText}>＋ New Game</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -343,6 +396,17 @@ const styles = StyleSheet.create({
   expMeta: { fontSize: 12, marginTop: 2 },
   expAmount: { fontSize: 16, fontWeight: '700' },
   expFxBadge: { fontSize: 11, marginTop: 2, fontStyle: 'italic' },
+  gameCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    gap: 12,
+  },
+  gameEmoji: { fontSize: 24 },
+  gameName: { fontSize: 15, fontWeight: '600' },
+  gameMeta: { fontSize: 12, marginTop: 2 },
   debtCard: {
     flexDirection: 'row',
     alignItems: 'center',
