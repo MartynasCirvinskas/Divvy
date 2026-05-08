@@ -7,6 +7,8 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { GroupScreen } from '../screens/GroupScreen';
 import { AddExpenseScreen } from '../screens/AddExpenseScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { NewGameScreen } from '../screens/NewGameScreen';
+import { GameSessionScreen } from '../screens/GameSessionScreen';
 import { useProfile } from '../contexts/ProfileContext';
 import { COLORS } from '../theme/colors';
 
@@ -14,6 +16,8 @@ export type RootStackParamList = {
   Home: undefined;
   Group: { groupId: string };
   AddExpense: { groupId: string; expenseId?: string };
+  NewGame: { groupId: string };
+  GameSession: { groupId: string; sessionId: string };
 };
 
 export type OnboardingParamList = {
@@ -77,6 +81,8 @@ export function AppNavigator() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Group" component={GroupScreen} />
         <Stack.Screen name="AddExpense" component={AddExpenseScreen} />
+        <Stack.Screen name="NewGame" component={NewGameScreen} />
+        <Stack.Screen name="GameSession" component={GameSessionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

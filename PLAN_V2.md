@@ -661,7 +661,7 @@ export function useGameSessions(groupId: string) {
 - Create: `src/screens/NewGameScreen.tsx`
 - Modify: `src/navigation/AppNavigator.tsx` (add route)
 
-- [ ] **Step 1:** Add `NewGame` to `RootStackParamList`:
+- [x] **Step 1:** Added `NewGame` and `GameSession` to `RootStackParamList` in AppNavigator.
 
 ```ts
 export type RootStackParamList = {
@@ -673,7 +673,7 @@ export type RootStackParamList = {
 };
 ```
 
-- [ ] **Step 2:** Create `src/screens/NewGameScreen.tsx`:
+- [x] **Step 2:** Created `src/screens/NewGameScreen.tsx` with name, scoring direction, member chips, team-input + chips, and validation (≥2 participants, name required).
 
 ```tsx
 import React, { useState } from 'react';
@@ -931,12 +931,9 @@ const styles = StyleSheet.create({
 });
 ```
 
-- [ ] **Step 3:** Wire into `AppNavigator.tsx`:
-  - Import `NewGameScreen` from screens
-  - Add `<Stack.Screen name="NewGame" component={NewGameScreen} />` next to AddExpense
-
-- [ ] **Step 4:** Run gates.
-- [ ] **Step 5:** Commit: `feat(games): NewGameScreen — session config UI`.
+- [x] **Step 3:** Wired into AppNavigator (also wired GameSessionScreen here together since the navigator imports both).
+- [x] **Step 4:** Typecheck 0, lint 0.
+- [x] **Step 5:** Commit: `feat(games): NewGameScreen — session config UI`.
 
 ## Task B.7 — `GameSessionScreen` — live scoreboard
 
@@ -944,7 +941,7 @@ const styles = StyleSheet.create({
 - Create: `src/screens/GameSessionScreen.tsx`
 - Modify: `src/navigation/AppNavigator.tsx`
 
-- [ ] **Step 1:** Create `src/screens/GameSessionScreen.tsx`:
+- [x] **Step 1:** Created `src/screens/GameSessionScreen.tsx` — live scoreboard, sorted by score (best first per scoring direction), per-row +/- 1 / +5 buttons, end + delete actions, post-end winner banner.
 
 ```tsx
 import React from 'react';
@@ -1189,9 +1186,9 @@ const styles = StyleSheet.create({
 });
 ```
 
-- [ ] **Step 2:** Add `GameSessionScreen` import + route to `AppNavigator.tsx`.
-- [ ] **Step 3:** Run gates.
-- [ ] **Step 4:** Commit: `feat(games): GameSessionScreen — live scoreboard with +/- buttons`.
+- [x] **Step 2:** Added GameSessionScreen import + route to AppNavigator (done together with NewGame in Task B.6).
+- [x] **Step 3:** Typecheck 0, lint 0.
+- [x] **Step 4:** Commit: `feat(games): GameSessionScreen — live scoreboard with +/- buttons`.
 
 ## Task B.8 — Wire game module into `GroupScreen`
 
