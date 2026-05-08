@@ -20,9 +20,29 @@ export function GroupsProvider({ children }: { children: React.ReactNode }) {
     if (!profile) return;
     setLoading(true);
     try {
-      const fetched = await Promise.all(profile.joinedGroups.map(getGroupMeta));
+      // Compute the delta: which joinedGroup IDs aren't already known locally?
+      // (addLocally already places freshly created/joined groups in state,
+      // so refetching them is wasted work.)
+      let missingIds: string[] = [];
+      setGroups((existing) => {
+        const known = new Set(existing.map((g) => g.id));
+        const stillJoined = new Set(profile.joinedGroups);
+        missingIds = profile.joinedGroups.filter((id) => !known.has(id));
+        // Drop any groups the user has left
+        const kept = existing.filter((g) => stillJoined.has(g.id));
+        return kept.sort((a, b) => b.createdAt - a.createdAt);
+      });
+      if (missingIds.length === 0) {
+        setLoading(false);
+        return;
+      }
+      const fetched = await Promise.all(missingIds.map(getGroupMeta));
       const valid = fetched.filter((g): g is GroupMeta => g !== null);
-      setGroups(valid.sort((a, b) => b.createdAt - a.createdAt));
+      setGroups((prev) => {
+        const map = new Map<string, GroupMeta>();
+        [...prev, ...valid].forEach((g) => map.set(g.id, g));
+        return Array.from(map.values()).sort((a, b) => b.createdAt - a.createdAt);
+      });
     } catch (e) {
       console.error('[groups] refresh failed', e);
     } finally {

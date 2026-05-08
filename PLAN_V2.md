@@ -166,9 +166,8 @@ Currently `GroupsContext.refresh` re-fetches metadata for *every* `joinedGroup` 
 **Files:**
 - Modify: `src/contexts/GroupsContext.tsx`
 
-- [ ] **Step 1:** Open `src/contexts/GroupsContext.tsx`, read it fully.
-
-- [ ] **Step 2:** Update `refresh` to only fetch IDs not already present:
+- [x] **Step 1:** Read GroupsContext.tsx fully.
+- [x] **Step 2:** Updated `refresh` to compute delta vs known IDs, only fetch missing, drop left groups:
 
 ```ts
 const refresh = useCallback(async () => {
@@ -202,9 +201,8 @@ const refresh = useCallback(async () => {
 }, [profile]);
 ```
 
-- [ ] **Step 3:** Run gates. Manually trace: on group create, `addLocally` adds it to state. Profile updates via Task A.2. `refresh` fires from useEffect on profile change. `knownIds` already has the new group from `addLocally`, so `missing` is empty → no extra fetch.
-
-- [ ] **Step 4:** Commit: `perf(groups): refresh fetches only delta, not all known groups`.
+- [x] **Step 3:** Gates pass. Trace verified: addLocally adds new group, profile updates, refresh sees the ID already in state → missingIds empty → no extra fetch.
+- [x] **Step 4:** Commit: `perf(groups): refresh fetches only delta, not all known groups`.
 
 ## Task A.4 — Push notifications scaffold (foundation for V2 features)
 
