@@ -3,13 +3,14 @@ import {
 } from 'firebase/database';
 import { db } from './config';
 import { Group, Member, Expense } from '../types';
+import { stripUndefined } from '../utils/firebase-safe';
 
 // ─── Group CRUD ───────────────────────────────────────────────────────────────
 
 export async function createGroup(group: Group): Promise<void> {
   // Multi-path atomic write — both succeed or both fail.
   const updates: Record<string, unknown> = {};
-  updates[`groups/${group.id}`] = group;
+  updates[`groups/${group.id}`] = stripUndefined(group);
   updates[`codes/${group.code}`] = group.id;
   await update(ref(db), updates);
 }
@@ -40,13 +41,13 @@ export function subscribeToGroup(
 // ─── Member ops ───────────────────────────────────────────────────────────────
 
 export async function addMember(groupId: string, member: Member): Promise<void> {
-  await set(ref(db, `groups/${groupId}/members/${member.id}`), member);
+  await set(ref(db, `groups/${groupId}/members/${member.id}`), stripUndefined(member));
 }
 
 // ─── Expense ops ─────────────────────────────────────────────────────────────
 
 export async function addExpense(groupId: string, expense: Expense): Promise<void> {
-  await set(ref(db, `groups/${groupId}/expenses/${expense.id}`), expense);
+  await set(ref(db, `groups/${groupId}/expenses/${expense.id}`), stripUndefined(expense));
 }
 
 export async function deleteExpense(groupId: string, expenseId: string): Promise<void> {

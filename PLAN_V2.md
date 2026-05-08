@@ -41,7 +41,7 @@ The fix for the "set failed: value argument contains undefined" RTDB error curre
 - Create: `src/utils/__tests__/firebase-safe.test.ts`
 - Modify: `src/firebase/db.ts` (remove inline helper, import from utils)
 
-- [ ] **Step 1:** Write the failing tests at `src/utils/__tests__/firebase-safe.test.ts`:
+- [x] **Step 1:** Write the failing tests at `src/utils/__tests__/firebase-safe.test.ts`:
 
 ```ts
 import { stripUndefined } from '../firebase-safe';
@@ -85,9 +85,9 @@ describe('stripUndefined', () => {
 });
 ```
 
-- [ ] **Step 2:** Run `npm test -- firebase-safe.test.ts`. Expect: FAIL (module not found).
+- [x] **Step 2:** Confirmed FAIL: `Cannot find module '../firebase-safe'`.
 
-- [ ] **Step 3:** Create `src/utils/firebase-safe.ts`:
+- [x] **Step 3:** Create `src/utils/firebase-safe.ts`:
 
 ```ts
 /**
@@ -109,13 +109,9 @@ export function stripUndefined<T>(value: T): T {
 }
 ```
 
-- [ ] **Step 4:** Update `src/firebase/db.ts`:
-  - Remove the inline `stripUndefined` helper (the function definition with the comment)
-  - Add `import { stripUndefined } from '../utils/firebase-safe';` near the other imports
-
-- [ ] **Step 5:** Run `npm test`, `npx tsc --noEmit`, `npm run lint`. All clean.
-
-- [ ] **Step 6:** Commit: `refactor(firebase): extract stripUndefined to utils with tests`.
+- [x] **Step 4:** Updated `db.ts` — removed inline helper, imported from `../utils/firebase-safe`.
+- [x] **Step 5:** Tests 64/64, typecheck 0, lint 0.
+- [x] **Step 6:** Commit: `refactor(firebase): extract stripUndefined to utils with tests`.
 
 ## Task A.2 — Optimistic profile update in `ProfileContext.addGroup`
 
