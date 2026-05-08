@@ -91,6 +91,41 @@ npm run android   # ~2-3 min with warm Gradle cache
 
 If anything looks wrong: `adb logcat -d -t 100 ReactNativeJS:* "*:S"` shows recent JS errors.
 
+### Wishlist privacy — RTDB rules update needed (when wishlist UI ships)
+
+The data layer is in place but the RTDB rules in `firebase-rules.json`
+don't yet protect the privacy split. When you build the wishlist UI
+(currently deferred — only types + DB ops shipped this run), update
+the rules to add this block, then paste into Firebase console:
+
+```json
+"wishlists": {
+  "$ownerId": {
+    "items": {
+      ".read": "auth != null && root.child('groups').child($groupId).child('members').child(auth.uid).exists()",
+      ".write": "auth != null && auth.uid == $ownerId"
+    },
+    "claims": {
+      "$itemId": {
+        ".read": "auth != null && auth.uid != $ownerId && root.child('groups').child($groupId).child('members').child(auth.uid).exists()",
+        ".write": "auth != null && auth.uid != $ownerId && root.child('groups').child($groupId).child('members').child(auth.uid).exists()"
+      }
+    }
+  }
+}
+```
+
+Two caveats:
+1. The exact selectors depend on `$groupId` being available in the path
+   context — this requires the rules to be nested inside `groups/$groupId/wishlists/...`,
+   not at the root. Rewrite to slot inside the existing `groups/$groupId`
+   block.
+2. The claimer should be able to read their own claim back so they know
+   what they've reserved. The above rule denies read to ALL non-owners
+   except via the implicit "you can read what you wrote." Test in the
+   Firebase Rules Playground before publishing — wishlist privacy bugs
+   ruin gifts and trust.
+
 ### V1.1 widget work (deferred per WIDGET_RESEARCH.md)
 
 When ready (post-launch, ~6-8 weeks out), the widget plan is:

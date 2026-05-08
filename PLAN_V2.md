@@ -1310,7 +1310,7 @@ export interface Member {
 **Files:**
 - Modify: `src/firebase/db.ts`
 
-- [ ] **Step 1:** Add ops at the bottom of `db.ts`:
+- [x] **Step 1:** Added 5 wishlist ops to db.ts: addWishItem, deleteWishItem (atomic items+claims clear), claimWishItem, unclaimWishItem, subscribeToWishlist.
 
 ```ts
 import { WishItem, WishItemClaim } from '../types';
@@ -1372,7 +1372,7 @@ export async function unclaimWishItem(
 }
 ```
 
-- [ ] **Step 2:** Append to `USER_TODO.md`:
+- [x] **Step 2:** Appended wishlist privacy rules note to USER_TODO.md (the rules need to be nested inside groups/\$groupId — caveats documented).
 
 ```markdown
 ### Wishlist privacy — RTDB rules update needed
@@ -1406,8 +1406,8 @@ claimer themselves so they can see what they've claimed. Test in the Firebase
 Rules Playground before publishing.)
 ```
 
-- [ ] **Step 3:** Run gates.
-- [ ] **Step 4:** Commit: `feat(db): wishlist ops with split-path privacy`.
+- [x] **Step 3:** Typecheck 0, tests 74/74, lint 0.
+- [x] **Step 4:** Commit: `feat(db): wishlist ops with split-path privacy`.
 
 ## Task C.3 — Phase C UI (basic, time-permitting)
 

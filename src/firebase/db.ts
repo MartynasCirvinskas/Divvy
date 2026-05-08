@@ -2,7 +2,7 @@ import {
   ref, set, get, update, remove, onValue, off, runTransaction,
 } from 'firebase/database';
 import { db } from './config';
-import { Group, Member, Expense, GameSession } from '../types';
+import { Group, Member, Expense, GameSession, WishItem, WishItemClaim } from '../types';
 import { stripUndefined } from '../utils/firebase-safe';
 
 // ─── Group CRUD ───────────────────────────────────────────────────────────────
@@ -160,6 +160,88 @@ export function subscribeToGameSessions(
     const map = snap.val() as Record<string, GameSession>;
     const list = Object.values(map).sort((a, b) => b.createdAt - a.createdAt);
     onUpdate(list);
+  });
+  return () => off(r, 'value', handler);
+}
+
+// ─── Wishlist ops ────────────────────────────────────────────────────────────
+
+/** Items are public — group members can read each other's wishlists. */
+export async function addWishItem(
+  groupId: string,
+  ownerMemberId: string,
+  item: WishItem,
+): Promise<void> {
+  await set(
+    ref(db, `groups/${groupId}/wishlists/${ownerMemberId}/items/${item.id}`),
+    stripUndefined(item),
+  );
+}
+
+export async function deleteWishItem(
+  groupId: string,
+  ownerMemberId: string,
+  itemId: string,
+): Promise<void> {
+  // Atomic — also clear any existing claim on this item.
+  await update(ref(db), {
+    [`groups/${groupId}/wishlists/${ownerMemberId}/items/${itemId}`]: null,
+    [`groups/${groupId}/wishlists/${ownerMemberId}/claims/${itemId}`]: null,
+  });
+}
+
+/**
+ * Claims live in a SEPARATE path from items so the wishlist owner can't see
+ * who claimed an item (preserves the gift surprise). RTDB rules in
+ * firebase-rules.json restrict /claims/* to be unreadable by the owner.
+ */
+export async function claimWishItem(
+  groupId: string,
+  ownerMemberId: string,
+  itemId: string,
+  claimerMemberId: string,
+): Promise<void> {
+  const claim: WishItemClaim = {
+    itemId,
+    claimedBy: claimerMemberId,
+    claimedAt: Date.now(),
+  };
+  await set(
+    ref(db, `groups/${groupId}/wishlists/${ownerMemberId}/claims/${itemId}`),
+    stripUndefined(claim),
+  );
+}
+
+export async function unclaimWishItem(
+  groupId: string,
+  ownerMemberId: string,
+  itemId: string,
+): Promise<void> {
+  await remove(ref(db, `groups/${groupId}/wishlists/${ownerMemberId}/claims/${itemId}`));
+}
+
+/**
+ * Subscribe to all items + (visible) claims for one member's wishlist within
+ * a group. Owner sees only items; claimer/others see items + claims they
+ * can read per RTDB rules.
+ */
+export function subscribeToWishlist(
+  groupId: string,
+  ownerMemberId: string,
+  onUpdate: (items: WishItem[], claims: Record<string, WishItemClaim>) => void,
+): () => void {
+  const r = ref(db, `groups/${groupId}/wishlists/${ownerMemberId}`);
+  const handler = onValue(r, (snap) => {
+    if (!snap.exists()) {
+      onUpdate([], {});
+      return;
+    }
+    const data = snap.val() as {
+      items?: Record<string, WishItem>;
+      claims?: Record<string, WishItemClaim>;
+    };
+    const items = Object.values(data.items ?? {}).sort((a, b) => b.createdAt - a.createdAt);
+    onUpdate(items, data.claims ?? {});
   });
   return () => off(r, 'value', handler);
 }
