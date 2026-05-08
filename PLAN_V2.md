@@ -338,8 +338,8 @@ device, settle-up nudges) work without any of the above.
 
 ## Task A.5 — Phase A verify
 
-- [ ] **Step 1:** Run `npx tsc --noEmit && npm test && npm run lint`. All green.
-- [ ] **Step 2:** Commit: `chore: Phase A verify (perf + notifications scaffold)`.
+- [x] **Step 1:** Typecheck 0, tests 64/64, lint exit 0.
+- [x] **Step 2:** Commit: `chore: Phase A verify (perf + notifications scaffold)`.
 
 ---
 
