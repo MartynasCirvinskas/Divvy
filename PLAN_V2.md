@@ -389,7 +389,7 @@ export interface GameSession {
 - Create: `src/utils/scoring.ts`
 - Create: `src/utils/__tests__/scoring.test.ts`
 
-- [ ] **Step 1:** Write tests first:
+- [x] **Step 1:** Wrote 10 tests for computeWinner + team labels.
 
 ```ts
 import { computeWinner, isParticipantTeam, teamLabel } from '../scoring';
@@ -429,7 +429,7 @@ describe('scoring', () => {
 });
 ```
 
-- [ ] **Step 2:** Implement in `src/utils/scoring.ts`:
+- [x] **Step 2:** Implemented `src/utils/scoring.ts` (computeWinner, isParticipantTeam, teamLabel, makeTeamId).
 
 ```ts
 import { ScoringDirection } from '../types';
@@ -473,8 +473,8 @@ export function computeWinner(
 }
 ```
 
-- [ ] **Step 3:** Run `npm test -- scoring.test.ts`. All pass.
-- [ ] **Step 4:** Commit: `feat(scoring): pure scoring math + 6 tests`.
+- [x] **Step 3:** All 74 tests pass.
+- [x] **Step 4:** Commit: `feat(scoring): pure scoring math + 10 tests`.
 
 ## Task B.3 — Game session DB layer
 
