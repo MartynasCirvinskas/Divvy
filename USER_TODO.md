@@ -91,6 +91,18 @@ npm run android   # ~2-3 min with warm Gradle cache
 
 If anything looks wrong: `adb logcat -d -t 100 ReactNativeJS:* "*:S"` shows recent JS errors.
 
+### Birthday wishlist — UI deferred to a future plan
+
+Phase C of `PLAN_V2.md` had a bonus task to build the WishlistScreen
+UI on top of the data layer. UI scope was too big to fit cleanly into
+this Ralph run; data layer (types + DB ops) shipped instead. The UI
+work is well-scoped for a future plan: ~1-2 days for a basic
+"per-member wishlist + claim/unclaim button + add-to-my-wishlist"
+flow, slotted as a third tab on GroupScreen alongside Expenses and
+Games.
+
+Reference: PLAN_V2.md Tasks C.1 (types), C.2 (DB), C.3 (UI — deferred).
+
 ### Wishlist privacy — RTDB rules update needed (when wishlist UI ships)
 
 The data layer is in place but the RTDB rules in `firebase-rules.json`

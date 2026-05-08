@@ -1413,13 +1413,11 @@ Rules Playground before publishing.)
 
 If Ralph reaches this point with iteration budget remaining: build a minimal `WishlistScreen` accessed from the Group screen. Otherwise, skip — leave the data layer + USER_TODO note and let a follow-up plan finish the UI.
 
-- [ ] **Step 1:** [Skipped if iterations running low] Build `WishlistScreen.tsx` showing:
-  - Each member's name as a section header
-  - Their items as rows
-  - Claim/unclaim button per item (only visible if not your own wishlist)
-  - "Add to my wishlist" button at the bottom (only when viewing your own)
-- [ ] **Step 2:** Wire from GroupScreen.
-- [ ] **Step 3:** Commit: `feat(wishlist): minimal screen for adding + claiming`.
+- [~] **Step 1:** DEFERRED. UI scope is substantial (~1-2 days) and the bonus
+  Phase C plan explicitly allowed skipping. Data layer (C.1 + C.2) is in
+  place + ready for a follow-up plan to consume.
+- [~] **Step 2:** DEFERRED with C.3 Step 1.
+- [~] **Step 3:** DEFERRED with C.3 Step 1.
 
 ---
 
