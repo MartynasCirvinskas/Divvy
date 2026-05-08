@@ -91,6 +91,27 @@ export interface MemberBalance {
   netCents: number;
 }
 
+// ─── Game session types ───────────────────────────────────────────────────────
+
+export type ScoringDirection = 'high-wins' | 'low-wins';
+
+export interface GameSession {
+  id: string;
+  groupId: string;
+  name: string;
+  scoringDirection: ScoringDirection;
+  /** Member ids OR free-form team strings (e.g. "Team Alpha"). Free-form
+   *  strings are prefixed with `team:` so they can't collide with member ids. */
+  participants: string[];
+  /** Map participant id → integer score. */
+  scores: Record<string, number>;
+  createdAt: number;
+  endedAt?: number;
+  /** Winner id, computed and stored on session end. */
+  winnerId?: string;
+  createdByDeviceId: string;
+}
+
 // ─── Local store types ────────────────────────────────────────────────────────
 
 export interface LocalProfile {

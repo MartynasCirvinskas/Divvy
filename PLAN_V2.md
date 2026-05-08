@@ -356,7 +356,7 @@ Highest-value V2 feature per `V2_STRATEGY.md`: every existing score-tracker (BG 
 **Files:**
 - Modify: `src/types/index.ts`
 
-- [ ] **Step 1:** Add to types:
+- [x] **Step 1:** Added `ScoringDirection` + `GameSession` to types/index.ts.
 
 ```ts
 export type ScoringDirection = 'high-wins' | 'low-wins';
@@ -380,8 +380,8 @@ export interface GameSession {
 }
 ```
 
-- [ ] **Step 2:** Run typecheck. Expect 0 errors (just adding new types).
-- [ ] **Step 3:** Commit: `feat(types): add GameSession + ScoringDirection`.
+- [x] **Step 2:** Typecheck 0.
+- [x] **Step 3:** Commit: `feat(types): add GameSession + ScoringDirection`.
 
 ## Task B.2 — Pure scoring math + tests
 
