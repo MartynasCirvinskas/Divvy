@@ -6,6 +6,7 @@ import { useColorScheme } from 'react-native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { GroupScreen } from '../screens/GroupScreen';
 import { AddExpenseScreen } from '../screens/AddExpenseScreen';
+import { AddWishItemScreen } from '../screens/AddWishItemScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { NewGameScreen } from '../screens/NewGameScreen';
 import { GameSessionScreen } from '../screens/GameSessionScreen';
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   Home: undefined;
   Group: { groupId: string };
   AddExpense: { groupId: string; expenseId?: string };
+  AddWishItem: { groupId: string };
   NewGame: { groupId: string };
   GameSession: { groupId: string; sessionId: string };
 };
@@ -81,6 +83,7 @@ export function AppNavigator() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Group" component={GroupScreen} />
         <Stack.Screen name="AddExpense" component={AddExpenseScreen} />
+        <Stack.Screen name="AddWishItem" component={AddWishItemScreen} />
         <Stack.Screen name="NewGame" component={NewGameScreen} />
         <Stack.Screen name="GameSession" component={GameSessionScreen} />
       </Stack.Navigator>
