@@ -7,6 +7,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { GroupScreen } from '../screens/GroupScreen';
 import { AddExpenseScreen } from '../screens/AddExpenseScreen';
 import { AddWishItemScreen } from '../screens/AddWishItemScreen';
+import { WishlistDetailScreen } from '../screens/WishlistDetailScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { NewGameScreen } from '../screens/NewGameScreen';
 import { GameSessionScreen } from '../screens/GameSessionScreen';
@@ -18,6 +19,7 @@ export type RootStackParamList = {
   Group: { groupId: string };
   AddExpense: { groupId: string; expenseId?: string };
   AddWishItem: { groupId: string };
+  WishlistDetail: { groupId: string; ownerId: string };
   NewGame: { groupId: string };
   GameSession: { groupId: string; sessionId: string };
 };
@@ -84,6 +86,7 @@ export function AppNavigator() {
         <Stack.Screen name="Group" component={GroupScreen} />
         <Stack.Screen name="AddExpense" component={AddExpenseScreen} />
         <Stack.Screen name="AddWishItem" component={AddWishItemScreen} />
+        <Stack.Screen name="WishlistDetail" component={WishlistDetailScreen} />
         <Stack.Screen name="NewGame" component={NewGameScreen} />
         <Stack.Screen name="GameSession" component={GameSessionScreen} />
       </Stack.Navigator>
