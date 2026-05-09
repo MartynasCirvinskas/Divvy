@@ -149,3 +149,40 @@ When ready (post-launch, ~6-8 weeks out), the widget plan is:
 
 Skipped for now — pre-launch widget ROI is near zero. Detailed plan is in
 WIDGET_RESEARCH.md.
+
+### V2C Wishlist UI — manual smoke test on emulator
+
+Native code changed (added `@react-native-community/datetimepicker`). You
+need to rebuild before the new screens render.
+
+```powershell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:Path = "$env:Path;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\emulator;$env:JAVA_HOME\bin"
+
+# Make sure Divvy_Pixel emulator is up; then:
+cd C:\Users\marty\OneDrive\Desktop\Agents\Idea_Executor\Divvy
+npm run android   # ~2-3 min with warm Gradle cache
+```
+
+**Test the new flow (single phone first):**
+1. Open a group → tap the new **🎁 Wishes** tab
+2. The list shows members with "You" pinned at top
+3. Tap **You** → tap **Set** next to the birthday row → pick a date → confirm it shows "🎂 in N days" or "🎂 Mon DD"
+4. Tap **＋ Add a wish** → enter "Camera bag", URL `https://amazon.de`, price `45` → Save
+5. Back on the members landing, your row should show "1 wish · 🎂 in N days"
+6. Tap **You** again — verify NO claim badge shows on the camera bag (privacy hold for owner)
+
+**Test multi-phone (privacy + claim coordination):**
+1. On phone 2 (or second emulator), join the same group as a different member
+2. Tap **🎁 Wishes** → tap the first user's row → see the camera bag → tap **Claim**
+3. Verify the row now shows **✓ Claimed by you** with **Unclaim** button
+4. Switch back to phone 1, tap **You** → verify still NO claim info shown
+5. Phone 2: tap **Unclaim** → verify it returns to **Claim**
+6. (Optional, if you have a third device) phone 3 claims the same item → on phone 2 it should show "Claimed by [phone3 name]" with disabled `—` button. Test concurrent race: two phones tap **Claim** at the same instant — exactly one succeeds, the other gets "Already claimed by X" alert thanks to the `runTransaction` guard.
+
+If anything looks wrong: `adb logcat -d -t 100 ReactNativeJS:* "*:S"` shows recent JS errors.
+
+**Note:** The privacy guarantee currently has only the client-side filter. The
+RTDB rules update for true server-enforcement is still pending in the
+"Wishlist privacy — RTDB rules update needed" section above.
