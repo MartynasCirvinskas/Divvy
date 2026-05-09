@@ -44,6 +44,22 @@ export async function addMember(groupId: string, member: Member): Promise<void> 
   await set(ref(db, `groups/${groupId}/members/${member.id}`), stripUndefined(member));
 }
 
+/**
+ * Set or clear a member's birthday (MM-DD format). Pass `null` to clear.
+ * Same trust model as renaming a member: any group member can write, since
+ * RTDB rules grant member writes broadly. V2.5 hardening pass should restrict
+ * to `auth.uid == memberId`.
+ */
+export async function setMemberBirthday(
+  groupId: string,
+  memberId: string,
+  birthday: string | null,
+): Promise<void> {
+  await update(ref(db, `groups/${groupId}/members/${memberId}`), {
+    birthday: birthday ?? null,
+  });
+}
+
 // ─── Expense ops ─────────────────────────────────────────────────────────────
 
 export async function addExpense(groupId: string, expense: Expense): Promise<void> {
@@ -201,15 +217,23 @@ export async function claimWishItem(
   itemId: string,
   claimerMemberId: string,
 ): Promise<void> {
-  const claim: WishItemClaim = {
-    itemId,
-    claimedBy: claimerMemberId,
-    claimedAt: Date.now(),
-  };
-  await set(
-    ref(db, `groups/${groupId}/wishlists/${ownerMemberId}/claims/${itemId}`),
-    stripUndefined(claim),
-  );
+  const r = ref(db, `groups/${groupId}/wishlists/${ownerMemberId}/claims/${itemId}`);
+  const result = await runTransaction(r, (current: WishItemClaim | null) => {
+    if (current && current.claimedBy !== claimerMemberId) {
+      // Already claimed by someone else — abort so caller knows.
+      return; // returning undefined aborts the transaction
+    }
+    const claim: WishItemClaim = {
+      itemId,
+      claimedBy: claimerMemberId,
+      claimedAt: Date.now(),
+    };
+    return claim;
+  });
+  if (!result.committed) {
+    // Surface the conflict so UI can show "already claimed by X"
+    throw new Error('CLAIM_CONFLICT');
+  }
 }
 
 export async function unclaimWishItem(
