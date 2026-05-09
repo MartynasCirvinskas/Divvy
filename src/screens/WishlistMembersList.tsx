@@ -25,7 +25,9 @@ export function WishlistMembersList({
 
   // Members, with "You" pinned to the top.
   const members = useMemo<Member[]>(() => {
-    const all = Object.values(group?.members ?? {});
+    // Defensive: filter team:* IDs (game-session team participants) — they
+    // aren't real members, but guard against future data-shape changes.
+    const all = Object.values(group?.members ?? {}).filter((m) => !m.id.startsWith('team:'));
     const me = all.find((m) => m.id === myId);
     const others = all.filter((m) => m.id !== myId);
     return me ? [me, ...others] : all;
