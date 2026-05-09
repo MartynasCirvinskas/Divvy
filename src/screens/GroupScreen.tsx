@@ -14,6 +14,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { Expense, CATEGORY_META, GameSession } from '../types';
 import { useGroup } from '../hooks/useGroup';
 import { useGameSessions } from '../hooks/useGameSessions';
+import { WishlistMembersList } from './WishlistMembersList';
 import { formatCents } from '../utils/money';
 import { expensesToCsv } from '../utils/csv';
 import { groupShareUrl } from '../utils/deeplink';
@@ -26,7 +27,7 @@ type Props = {
   route: RouteProp<RootStackParamList, 'Group'>;
 };
 
-type Tab = 'expenses' | 'balances' | 'games';
+type Tab = 'expenses' | 'balances' | 'games' | 'wishes';
 
 export function GroupScreen({ navigation, route }: Props) {
   const { groupId } = route.params;
@@ -225,14 +226,20 @@ export function GroupScreen({ navigation, route }: Props) {
 
       {/* Tabs */}
       <View style={[styles.tabs, { borderColor: theme.border }]}>
-        {(['expenses', 'balances', 'games'] as Tab[]).map((t) => (
+        {(['expenses', 'balances', 'games', 'wishes'] as Tab[]).map((t) => (
           <TouchableOpacity
             key={t}
             style={[styles.tab, tab === t && { borderBottomColor: COLORS.primary, borderBottomWidth: 2 }]}
             onPress={() => setTab(t)}
           >
-            <Text style={[styles.tabText, { color: tab === t ? COLORS.primary : theme.onSurfaceVariant }]}>
-              {t === 'expenses' ? '📋 Expenses' : t === 'balances' ? '⚖️ Balances' : '🎲 Games'}
+            <Text
+              style={[styles.tabText, { color: tab === t ? COLORS.primary : theme.onSurfaceVariant }]}
+              numberOfLines={1}
+            >
+              {t === 'expenses' ? '📋 Expenses'
+               : t === 'balances' ? '⚖️ Balances'
+               : t === 'games' ? '🎲 Games'
+               : '🎁 Wishes'}
             </Text>
           </TouchableOpacity>
         ))}
@@ -310,6 +317,9 @@ export function GroupScreen({ navigation, route }: Props) {
           }
         />
       )}
+      {tab === 'wishes' && (
+        <WishlistMembersList groupId={groupId} navigation={navigation} />
+      )}
 
       {/* Context-sensitive FAB */}
       {tab === 'expenses' && (
@@ -381,7 +391,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
   },
-  tabText: { fontSize: 14, fontWeight: '600' },
+  tabText: { fontSize: 13, fontWeight: '600' },
   list: { padding: 16, gap: 10, paddingBottom: 100 },
   expenseCard: {
     flexDirection: 'row',
