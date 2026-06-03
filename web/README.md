@@ -27,3 +27,6 @@ Drop APKs in `public/downloads/` and point `androidApkUrl` at `/downloads/<file>
    Hostinger hosting MCP `hosting_deployStaticWebsite` (needs an API token).
 2. Point `evenjar.com` + `www` DNS at the Hostinger site.
 3. `astro.config.mjs` `site` must stay `https://evenjar.com` for correct canonical/OG/sitemap URLs.
+
+## Pre-launch TODO
+- Replace `public/og/og-default.png` (currently a square app-icon placeholder) with a real **1200×630** PNG before launch so OG/Twitter card previews render correctly across all platforms.
