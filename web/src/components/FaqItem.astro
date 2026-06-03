@@ -1,0 +1,8 @@
+---
+interface Props { q: string; }
+const { q } = Astro.props;
+---
+<details class="card group">
+  <summary class="cursor-pointer list-none font-display font-bold">{q}</summary>
+  <div class="mt-3 text-muted"><slot /></div>
+</details>

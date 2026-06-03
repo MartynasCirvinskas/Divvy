@@ -1,4 +1,64 @@
-<html lang="en">
-  <head><title>EvenJar</title></head>
-  <body><h1>EvenJar — coming soon</h1></body>
-</html>
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import Step from '../components/Step.astro';
+import CTA from '../components/CTA.astro';
+import FaqItem from '../components/FaqItem.astro';
+import { SITE } from '../config';
+
+const features = [
+  { emoji: '💸', title: 'Split bills fairly', body: 'Equal, custom, or percentage splits with multi-currency and debt-minimizing settle-up.', href: '/features#expenses' },
+  { emoji: '🎁', title: 'Wishlists & gifting', body: 'Share what you want; friends claim gifts privately so surprises stay surprises.', href: '/features#wishlists' },
+  { emoji: '🎂', title: 'Birthdays', body: 'Never miss a group birthday — everyone stays in the loop.', href: '/features#birthdays' },
+  { emoji: '🎲', title: 'Game-night scores', body: 'Everyone joins the same scoreboard from their own phone. No passed-around device.', href: '/features#games' },
+];
+
+const faqs = [
+  { q: 'Do I need an account?', a: 'No. EvenJar uses anonymous sign-in and 6-letter group codes — no email or password required.' },
+  { q: 'Is it really free?', a: 'Yes. Core features are free with no ads and no limits on expenses or group size.' },
+  { q: 'How is this different from Splitwise?', a: 'No accounts, no ads, no paywalled basics — plus wishlists, birthdays, and game-night scoring in the same app.' },
+  { q: 'What currencies are supported?', a: 'Enter expenses in any currency; EvenJar converts to your group currency automatically.' },
+  { q: 'Can friends join without installing?', a: 'A web companion at evenjar.app/g/CODE is on the roadmap; for now, sharing a link prompts install + join.' },
+  { q: 'Where is my data stored?', a: 'Group and expense data live in Firebase. EvenJar collects no personally identifying information. See our Privacy page.' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+<BaseLayout jsonLd={jsonLd}>
+  <Hero />
+
+  <section class="container-x py-8">
+    <h2 class="text-center text-3xl">Everything your group shares — in one app</h2>
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {features.map((f) => <FeatureCard {...f} />)}
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <h2 class="text-center text-3xl">How it works</h2>
+    <div class="mt-10 grid gap-6 sm:grid-cols-3">
+      <Step n={1} title="Create or join a group" body="Start a group or join with a 6-letter code. No account needed." />
+      <Step n={2} title="Use the tools" body="Add expenses, wishlists, birthdays, and scoreboards together." />
+      <Step n={3} title="Stay even" body="EvenJar minimizes debts so the fewest payments settle the books." />
+    </div>
+  </section>
+
+  <section class="container-x py-8">
+    <h2 class="text-center text-3xl">The Splitwise you remember</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-center text-muted">No daily limits. No 10-second timers. No ads. EvenJar keeps the basics free, forever — and adds the rest of your group's life on top.</p>
+  </section>
+
+  <section class="container-x py-16">
+    <h2 class="text-center text-3xl">Questions</h2>
+    <div class="mx-auto mt-8 grid max-w-3xl gap-4">
+      {faqs.map((f) => <FaqItem q={f.q}><p>{f.a}</p></FaqItem>)}
+    </div>
+  </section>
+
+  <CTA />
+</BaseLayout>

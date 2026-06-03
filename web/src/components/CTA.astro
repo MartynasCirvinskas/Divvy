@@ -1,0 +1,12 @@
+---
+import DownloadButtons from './DownloadButtons.astro';
+interface Props { heading?: string; }
+const { heading = 'Ready to settle up — and everything else?' } = Astro.props;
+---
+<section class="container-x my-20">
+  <div class="card flex flex-col items-center gap-6 bg-honey-light/50 py-14 text-center">
+    <h2 class="text-3xl">{heading}</h2>
+    <p class="max-w-md text-muted">Get EvenJar and bring your whole group into one place.</p>
+    <DownloadButtons />
+  </div>
+</section>

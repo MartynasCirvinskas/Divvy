@@ -1,0 +1,18 @@
+---
+import { downloads } from '../config';
+import { downloadState } from '../lib/downloads';
+const platforms = [
+  { label: 'Android (APK)', url: downloads.androidApkUrl },
+  { label: 'Google Play', url: downloads.playStoreUrl },
+  { label: 'App Store', url: downloads.appStoreUrl },
+];
+---
+<div class="flex flex-wrap gap-3">
+  {platforms.map((p) =>
+    downloadState(p.url) === 'live' ? (
+      <a href={p.url} class="btn-primary">⬇️ {p.label}</a>
+    ) : (
+      <span class="btn-secondary cursor-default opacity-70" aria-disabled="true">{p.label} · Coming soon</span>
+    )
+  )}
+</div>
