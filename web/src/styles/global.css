@@ -1,0 +1,30 @@
+@import '@fontsource/plus-jakarta-sans/400.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/plus-jakarta-sans/800.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-cream text-ink font-body antialiased; }
+  h1, h2, h3, h4 { @apply font-display font-extrabold tracking-tight; }
+  a { @apply transition-colors; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-honey-dark; }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-content px-5 sm:px-8; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display font-bold transition; }
+  .btn-primary { @apply btn bg-honey text-ink hover:bg-honey-dark; }
+  .btn-secondary { @apply btn bg-surface text-ink shadow-soft hover:bg-honey-light; }
+  .card { @apply rounded-2xl bg-surface p-6 shadow-soft; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
