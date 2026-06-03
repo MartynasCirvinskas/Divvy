@@ -1,0 +1,25 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import CTA from '../components/CTA.astro';
+import { formatDate } from '../lib/content';
+interface Props { title: string; description: string; updatedDate: Date; }
+const { title, description, updatedDate } = Astro.props;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  dateModified: updatedDate.toISOString(),
+};
+---
+<BaseLayout title={title} description={description} type="article" jsonLd={jsonLd}>
+  <article class="container-x max-w-3xl py-16">
+    <a href="/tutorials" class="text-sm text-honey-dark">← All tutorials</a>
+    <h1 class="mt-4 text-4xl">{title}</h1>
+    <p class="mt-2 text-sm text-muted">Updated {formatDate(updatedDate)}</p>
+    <div class="prose-evenjar mt-8 space-y-4 [&_h2]:mt-8 [&_h2]:text-2xl [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_a]:text-honey-dark [&_a]:underline">
+      <slot />
+    </div>
+  </article>
+  <CTA heading="Try it yourself" />
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { sortByOrder } from '../../lib/content';
+const all = (await getCollection('tutorials', ({ data }) => !data.draft));
+const tutorials = sortByOrder(all);
+const featureLabels: Record<string, string> = { expenses: 'Expenses', wishlists: 'Wishlists', birthdays: 'Birthdays', games: 'Game night', general: 'Getting started' };
+---
+<BaseLayout title="Tutorials" description="Step-by-step guides to get the most out of EvenJar — groups, expenses, wishlists, and more.">
+  <section class="container-x py-16">
+    <h1 class="text-4xl sm:text-5xl">Tutorials</h1>
+    <p class="mt-4 max-w-2xl text-lg text-muted">Short, practical guides for every part of EvenJar.</p>
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {tutorials.map((t) => (
+        <ArticleCard href={`/tutorials/${t.slug}`} title={t.data.title} description={t.data.description} meta={featureLabels[t.data.feature]} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
