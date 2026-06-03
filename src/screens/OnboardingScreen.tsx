@@ -42,7 +42,7 @@ const PAGES: Page[] = [
     emoji: '⚖️',
     title: 'See who owes whom',
     body:
-      'Divvy minimizes debts so the fewest payments settle the books. Tap "Mark settled" once you\'ve paid up.',
+      'EvenJar minimizes debts so the fewest payments settle the books. Tap "Mark settled" once you\'ve paid up.',
   },
 ];
 

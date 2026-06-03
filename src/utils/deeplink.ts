@@ -1,5 +1,5 @@
 /** Public domain used in shared join links. */
-export const SHARE_HOST = 'divvy.app';
+export const SHARE_HOST = 'evenjar.app';
 
 /** Builds the public share URL for a group join code. */
 export function groupShareUrl(code: string): string {
@@ -8,8 +8,8 @@ export function groupShareUrl(code: string): string {
 
 /**
  * Parses a 6-character join code from any of:
- *  - https://divvy.app/g/ABC123
- *  - divvy://g/ABC123
+ *  - https://evenjar.app/g/ABC123
+ *  - evenjar://g/ABC123
  *  - any URL with /g/<6 chars> path
  *
  * Codes use unambiguous chars only (no O, 0, I, 1) — see generateGroupCode.

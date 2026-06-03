@@ -37,7 +37,7 @@ const DarkAppTheme = {
 };
 
 const linking = {
-  prefixes: ['divvy://', 'https://divvy.app'],
+  prefixes: ['evenjar://', 'https://evenjar.app'],
   config: {
     screens: {
       Home: '',

@@ -165,7 +165,7 @@ export function HomeScreen({ navigation }: Props) {
 
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <View>
-          <Text style={[styles.title, { color: theme.onBackground }]}>💸 Divvy</Text>
+          <Text style={[styles.title, { color: theme.onBackground }]}>🫙 EvenJar</Text>
           <Text style={[styles.subtitle, { color: theme.onSurfaceVariant }]}>
             {myName ? `Hey, ${myName}` : 'Split expenses fairly'}
           </Text>

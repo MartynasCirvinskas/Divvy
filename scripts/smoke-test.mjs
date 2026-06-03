@@ -95,7 +95,7 @@ process.on('SIGINT', async () => {
 });
 
 // --- run ---
-console.log('Divvy smoke test against', cfg.projectId);
+console.log('EvenJar smoke test against', cfg.projectId);
 console.log('Test code:', TEST_CODE, '| group id:', TEST_GROUP_ID);
 
 try {

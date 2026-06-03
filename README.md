@@ -1,4 +1,4 @@
-# 💸 Divvy — Split Expenses Fairly
+# 🫙 EvenJar — Split Expenses Fairly
 
 > The Splitwise you remember — no accounts, no ads, no daily limits, no 10-second timer.
 
@@ -12,7 +12,7 @@ A clean, minimal Splitwise alternative built with **React Native + Expo + Fireba
 - 🔁 **Recurring expenses** — mark rent / utilities once; visual indicator in the list
 - ⚖️ **Debt minimization** — fewest payments to settle the books
 - ✅ **Per-debtor settle-up** — tap "Mark settled" on your own debt rows
-- 🔗 **Share-by-link join** — `https://divvy.app/g/ABC234` opens the join modal
+- 🔗 **Share-by-link join** — `https://evenjar.app/g/ABC234` opens the join modal
 - 📤 **CSV export** — full expense history, sharable to email / Files / Drive
 - 🌙 **Dark / light mode** + safe-area-aware layouts on every device
 - 🔒 **Firebase Anonymous Auth** + member-bound RTDB rules (no wide-open data)
@@ -167,7 +167,7 @@ src/
 - Receipt photo attach (no OCR — keep it simple)
 - Activity feed
 - Charts / spend-by-category
-- Web companion at `divvy.app/g/{code}` for non-installers
+- Web companion at `evenjar.app/g/{code}` for non-installers
 
 ## License
 

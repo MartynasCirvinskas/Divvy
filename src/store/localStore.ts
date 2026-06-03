@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { v4 as uuidv4 } from 'uuid';
 import { LocalProfile } from '../types';
 
-const PROFILE_KEY = '@divvy_profile';
+const PROFILE_KEY = '@evenjar_profile';
 
 /**
  * Read or create the local profile.

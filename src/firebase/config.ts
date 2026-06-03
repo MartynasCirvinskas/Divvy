@@ -20,7 +20,7 @@ interface FirebaseConfig {
 const cfg = ((Constants.expoConfig?.extra as { firebase?: FirebaseConfig })?.firebase ?? {}) as FirebaseConfig;
 
 if (!cfg.apiKey) {
-  console.warn('[divvy] Firebase config missing — set EXPO_PUBLIC_FIREBASE_* env vars (see .env.example).');
+  console.warn('[evenjar] Firebase config missing — set EXPO_PUBLIC_FIREBASE_* env vars (see .env.example).');
 }
 
 const app = getApps().length ? getApps()[0] : initializeApp(cfg);

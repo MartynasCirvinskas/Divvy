@@ -46,7 +46,7 @@ export function GroupScreen({ navigation, route }: Props) {
     await Clipboard.setStringAsync(url);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     Share.share({
-      message: `Join my Divvy group "${group.name}":\n${url}\n\nCode: ${group.code}`,
+      message: `Join my EvenJar group "${group.name}":\n${url}\n\nCode: ${group.code}`,
     });
   };
 
@@ -55,7 +55,7 @@ export function GroupScreen({ navigation, route }: Props) {
     try {
       const exps = Object.values(group.expenses ?? {}).sort((a, b) => b.createdAt - a.createdAt);
       const csv = expensesToCsv(exps, group.members ?? {}, group.currency);
-      const path = `${FileSystem.cacheDirectory}divvy-${group.code}.csv`;
+      const path = `${FileSystem.cacheDirectory}evenjar-${group.code}.csv`;
       await FileSystem.writeAsStringAsync(path, csv, {
         encoding: FileSystem.EncodingType.UTF8,
       });

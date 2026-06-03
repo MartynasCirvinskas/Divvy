@@ -1,7 +1,7 @@
 module.exports = {
   expo: {
-    name: 'Divvy',
-    slug: 'divvy-app',
+    name: 'EvenJar',
+    slug: 'evenjar-app',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -14,26 +14,26 @@ module.exports = {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: false,
-      bundleIdentifier: 'com.divvy.app',
-      associatedDomains: ['applinks:divvy.app'],
+      bundleIdentifier: 'com.evenjar.app',
+      associatedDomains: ['applinks:evenjar.app'],
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#0D1117',
       },
-      package: 'com.divvy.app',
+      package: 'com.evenjar.app',
       permissions: ['VIBRATE', 'POST_NOTIFICATIONS'],
       intentFilters: [
         {
           action: 'VIEW',
           autoVerify: true,
-          data: [{ scheme: 'https', host: 'divvy.app', pathPrefix: '/g' }],
+          data: [{ scheme: 'https', host: 'evenjar.app', pathPrefix: '/g' }],
           category: ['BROWSABLE', 'DEFAULT'],
         },
       ],
     },
-    scheme: 'divvy',
+    scheme: 'evenjar',
     extra: {
       firebase: {
         apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
