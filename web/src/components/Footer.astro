@@ -1,0 +1,21 @@
+---
+import { SITE, NAV, SOCIAL } from '../config';
+const year = new Date().getFullYear();
+---
+<footer class="mt-24 border-t border-honey-light/60 bg-surface">
+  <div class="container-x grid gap-8 py-12 sm:grid-cols-3">
+    <div>
+      <p class="font-display text-lg font-extrabold">{SITE.emoji} {SITE.name}</p>
+      <p class="mt-2 max-w-xs text-sm text-muted">{SITE.tagline}</p>
+    </div>
+    <nav class="flex flex-col gap-2">
+      {NAV.map((i) => <a class="text-sm text-muted hover:text-ink" href={i.href}>{i.label}</a>)}
+      <a class="text-sm text-muted hover:text-ink" href="/privacy">Privacy</a>
+    </nav>
+    <div class="flex flex-col gap-2">
+      <a class="text-sm text-muted hover:text-ink" href={SOCIAL.github}>GitHub</a>
+      <a class="text-sm text-muted hover:text-ink" href="/rss.xml">RSS</a>
+    </div>
+  </div>
+  <div class="container-x pb-8 text-xs text-muted">© {year} {SITE.name}. No accounts, no ads, no caps.</div>
+</footer>

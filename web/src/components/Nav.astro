@@ -1,0 +1,15 @@
+---
+import { SITE, NAV } from '../config';
+---
+<header class="border-b border-honey-light/60 bg-cream/80 backdrop-blur sticky top-0 z-30">
+  <nav class="container-x flex items-center justify-between py-4">
+    <a href="/" class="font-display text-xl font-extrabold">{SITE.emoji} {SITE.name}</a>
+    <ul class="hidden items-center gap-7 md:flex">
+      {NAV.map((item) => (
+        <li><a href={item.href} class="font-display font-bold text-ink hover:text-honey-dark">{item.label}</a></li>
+      ))}
+    </ul>
+    <a href="/download" class="btn-primary hidden md:inline-flex">Get the app</a>
+    <a href="/download" class="btn-primary md:hidden">Get</a>
+  </nav>
+</header>
