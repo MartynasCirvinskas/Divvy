@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DownloadButtons from '../components/DownloadButtons.astro';
+import { downloads } from '../config';
+import { downloadState } from '../lib/downloads';
+const androidLive = downloadState(downloads.androidApkUrl) === 'live';
+---
+<BaseLayout title="Download" description="Get EvenJar for Android and iOS. Free, no account required.">
+  <section class="container-x max-w-2xl py-16 text-center">
+    <h1 class="text-4xl sm:text-5xl">Get EvenJar</h1>
+    <p class="mt-4 text-lg text-muted">Free to use. No account. Join a group with a 6-letter code in seconds.</p>
+    <div class="mt-8 flex justify-center"><DownloadButtons /></div>
+
+    <div class="card mt-12 text-left">
+      <h2 class="text-xl">Installing the Android APK</h2>
+      <ol class="mt-3 list-decimal space-y-1 pl-6 text-muted">
+        <li>Tap the Android (APK) button above to download.</li>
+        <li>Open the downloaded file; allow installs from your browser if prompted.</li>
+        <li>Open EvenJar and create or join a group.</li>
+      </ol>
+      {!androidLive && <p class="mt-4 text-sm text-muted">Android build links go live soon — check back shortly.</p>}
+    </div>
+
+    <p class="mt-10 text-sm text-muted">No ads. No caps. No personally identifying information collected — see our <a class="text-honey-dark underline" href="/privacy">Privacy policy</a>.</p>
+  </section>
+</BaseLayout>
