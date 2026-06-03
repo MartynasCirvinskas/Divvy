@@ -9,7 +9,34 @@ import { SITE, NAV } from '../config';
         <li><a href={item.href} class="font-display font-bold text-ink hover:text-honey-dark">{item.label}</a></li>
       ))}
     </ul>
-    <a href="/download" class="btn-primary hidden md:inline-flex">Get the app</a>
-    <a href="/download" class="btn-primary md:hidden">Get</a>
+    <div class="flex items-center gap-3">
+      <a href="/download" class="btn-primary hidden md:inline-flex">Get the app</a>
+      <button
+        id="nav-toggle"
+        type="button"
+        class="grid h-10 w-10 place-items-center rounded-full bg-surface shadow-soft md:hidden"
+        aria-label="Toggle menu"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
   </nav>
+  <div id="mobile-menu" class="hidden border-t border-honey-light/60 md:hidden">
+    <ul class="container-x flex flex-col gap-1 py-3">
+      {NAV.map((item) => (
+        <li><a href={item.href} class="block rounded-lg px-2 py-2 font-display font-bold text-ink hover:bg-honey-light">{item.label}</a></li>
+      ))}
+      <li><a href="/download" class="btn-primary mt-2 w-full">Get the app</a></li>
+    </ul>
+  </div>
 </header>
+<script>
+  const btn = document.getElementById('nav-toggle');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    const isOpen = menu?.classList.toggle('hidden') === false;
+    btn.setAttribute('aria-expanded', String(isOpen));
+  });
+</script>
